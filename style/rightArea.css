@@ -1,0 +1,61 @@
+/* ========= rightArea.css ========= */
+
+/* ===== 右エリア（北・カン） ===== */
+.rightArea{
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.rightBlock{
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.rightLabel{
+  font-size: 11px;
+  color:#666;
+  margin-bottom: 6px;
+  text-align: right;
+}
+
+#peis,
+#melds{
+  display:flex;
+
+  /* ★ブロック同士の間隔（北は今まで通りでもOKだが、まとめて調整） */
+  gap: 2px;
+
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* 北表示 */
+#peis img{
+  width: 34px;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* カン表示（副露表示） */
+.meld{
+  display:flex;
+
+  /* ★3枚組の間はぴっちり */
+  gap: 2px;
+
+  align-items:center;
+}
+
+.meld img{
+  width: 34px;
+  height: auto;
+  border-radius: 8px;
+}
