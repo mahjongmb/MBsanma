@@ -67,6 +67,7 @@
   ];
 
   let statsPreviewMode = loadStatsPreviewMode();
+  let activeStatsTabKey = "overview";
 
   const tracker = loadTracker();
 
@@ -140,6 +141,7 @@
       localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(Array.isArray(list) ? list.slice(0, HISTORY_LIMIT) : []));
     }catch(e){}
   }
+
   function loadStatsPreviewMode(){
     try{
       return localStorage.getItem(STATS_PREVIEW_MODE_STORAGE_KEY) === "1";
@@ -685,46 +687,273 @@
         line-height: 1.75;
         color: rgba(245,247,244,0.82);
       }
-
-.visitorStatsPreviewBar{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-}
-.visitorStatsPreviewNote{
-  font-size: 12px;
-  line-height: 1.65;
-  color: rgba(245,247,244,0.76);
-}
-.visitorStatsPreviewActions{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-.visitorStatsPreviewBtn{
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 999px;
-  min-height: 38px;
-  padding: 0 14px;
-  background: rgba(255,255,255,0.05);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-}
-.visitorStatsPreviewBtn.isPrimary{
-  border-color: rgba(255,214,111,0.28);
-  background: linear-gradient(180deg, rgba(255,214,111,0.20), rgba(255,214,111,0.10));
-  color: #fff4c9;
-}
+      .visitorStatsPreviewBar{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      }
+      .visitorStatsPreviewNote{
+        font-size: 12px;
+        line-height: 1.65;
+        color: rgba(245,247,244,0.76);
+      }
+      .visitorStatsPreviewActions{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .visitorStatsPreviewBtn{
+        appearance: none;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 999px;
+        min-height: 38px;
+        padding: 0 14px;
+        background: rgba(255,255,255,0.05);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .visitorStatsPreviewBtn.isPrimary{
+        border-color: rgba(255,214,111,0.28);
+        background: linear-gradient(180deg, rgba(255,214,111,0.20), rgba(255,214,111,0.10));
+        color: #fff4c9;
+      }
+      .visitorStatsTabs{
+        margin-bottom: 0;
+      }
+      .visitorStatsPanels{
+        display: grid;
+        gap: 12px;
+      }
+      .visitorStatsTabPanel{
+        display: none;
+      }
+      .visitorStatsTabPanel.isActive{
+        display: grid;
+        gap: 12px;
+      }
+      @media (max-width: 640px){
+        .visitorOverlay{
+          padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) 10px;
+          align-items: stretch;
+        }
+        .visitorPanel{
+          width: 100%;
+          max-height: none;
+          height: 100%;
+          border-radius: 16px;
+          padding: 14px 12px 16px;
+        }
+        .visitorPanelHeader{
+          position: sticky;
+          top: -14px;
+          z-index: 3;
+          margin: -14px -12px 12px;
+          padding: 12px 12px 10px;
+          background: linear-gradient(180deg, rgba(20,32,26,0.98) 0%, rgba(20,32,26,0.94) 72%, rgba(20,32,26,0) 100%);
+          backdrop-filter: blur(8px);
+          align-items: flex-start;
+        }
+        .visitorPanelTitle{
+          font-size: 20px;
+        }
+        .visitorPanelSub{
+          font-size: 11px;
+          line-height: 1.55;
+        }
+        .visitorPanelClose{
+          min-width: 40px;
+          height: 40px;
+          padding: 0 12px;
+          font-size: 12px;
+        }
+        .visitorRuleTabs,
+        .visitorStatsTabs{
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          position: sticky;
+          top: 52px;
+          z-index: 2;
+          padding-bottom: 4px;
+          background: linear-gradient(180deg, rgba(20,32,26,0.96) 0%, rgba(20,32,26,0.92) 72%, rgba(20,32,26,0) 100%);
+        }
+        .visitorRuleTabBtn,
+        .visitorStatsTabBtn{
+          min-height: 40px;
+          padding: 0 10px;
+          font-size: 12px;
+        }
+        .visitorRulePanelTitle{
+          font-size: 16px;
+        }
+        .visitorRulePanelSub,
+        .visitorRuleCardText,
+        .visitorRuleLineText,
+        .visitorRuleNotice{
+          font-size: 12px;
+          line-height: 1.65;
+        }
+        .visitorRuleCard{
+          padding: 12px;
+          border-radius: 12px;
+        }
+        .visitorRuleCardTitle,
+        .visitorYakuGroupTitle{
+          font-size: 14px;
+          margin-bottom: 6px;
+        }
+        .visitorRuleLine{
+          padding: 9px 10px;
+          border-radius: 10px;
+        }
+        .visitorRuleLineStrong{
+          font-size: 13px;
+        }
+        .visitorRulePills,
+        .visitorYakuList{
+          gap: 6px;
+        }
+        .visitorRulePill,
+        .visitorYakuItem{
+          min-height: 30px;
+          padding: 0 10px;
+          font-size: 12px;
+        }
+        .visitorRuleFootnote{
+          font-size: 11px;
+          line-height: 1.65;
+        }
+        .visitorStatsSection{
+          gap: 12px;
+        }
+        .visitorStatsPreviewBar{
+          display: grid;
+          gap: 10px;
+          padding: 12px;
+          border-radius: 14px;
+        }
+        .visitorStatsPreviewActions{
+          justify-content: stretch;
+        }
+        .visitorStatsPreviewBtn{
+          flex: 1 1 0;
+          min-height: 40px;
+          font-size: 12px;
+        }
+        .visitorStatsCards{
+          display: grid;
+          grid-auto-flow: column;
+          grid-auto-columns: minmax(76%, 1fr);
+          grid-template-columns: none;
+          overflow-x: auto;
+          gap: 10px;
+          padding-bottom: 4px;
+          scroll-snap-type: x proximity;
+          -webkit-overflow-scrolling: touch;
+        }
+        .visitorStatsCard{
+          min-height: 124px;
+          padding: 14px;
+          scroll-snap-align: start;
+        }
+        .visitorStatsCardRound{
+          font-size: 11px;
+        }
+        .visitorStatsCardRank{
+          font-size: 24px;
+        }
+        .visitorStatsCardPoint{
+          font-size: 22px;
+          margin-bottom: 6px;
+        }
+        .visitorStatsCardSub{
+          font-size: 12px;
+        }
+        .visitorStatsMain{
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .visitorStatsPanel,
+        .visitorStatsMiniPanel,
+        .visitorStatsTablePanel{
+          padding: 14px;
+          border-radius: 16px;
+        }
+        .visitorStatsPanelTitle,
+        .visitorStatsMiniTitle,
+        .visitorStatsTableTitle{
+          font-size: 17px;
+        }
+        .visitorStatsPanelSub{
+          font-size: 11px;
+          line-height: 1.6;
+        }
+        .visitorStyleWrap{
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .visitorStyleRadarBox{
+          order: -1;
+        }
+        .visitorStyleRadarSvg{
+          width: 164px;
+          height: 164px;
+        }
+        .visitorStyleScoreRow{
+          font-size: 13px;
+        }
+        .visitorWinSplit{
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .visitorDonut{
+          width: 138px;
+          height: 138px;
+        }
+        .visitorDonut::after{
+          inset: 24px;
+        }
+        .visitorLegendRow,
+        .visitorRankBarLabel,
+        .visitorRankBarValue{
+          font-size: 13px;
+        }
+        .visitorRankBarTrack{
+          height: 20px;
+        }
+        .visitorStatsTableGrid{
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+        .visitorStatsTableCell{
+          min-height: 78px;
+          padding: 10px 9px;
+          border-radius: 12px;
+        }
+        .visitorStatsTableLabel{
+          font-size: 11px;
+        }
+        .visitorStatsTableValue{
+          font-size: 18px;
+        }
+        .visitorStatsTableHint{
+          font-size: 10px;
+        }
+        .visitorStatsEmpty{
+          padding: 16px 14px;
+          font-size: 13px;
+          line-height: 1.7;
+        }
+      }
       @media (orientation: landscape) and (max-height: 520px){
         .visitorOverlay{
           padding: 10px;
@@ -1568,32 +1797,12 @@
     });
 
     actions.appendChild(toggleBtn);
-
     wrap.appendChild(note);
     wrap.appendChild(actions);
     return wrap;
   }
-  function renderStatsOverlay(){
-    ensureStatsOverlay();
-    const root = document.getElementById("visitorStatsRoot");
-    if (!root) return;
-    root.innerHTML = "";
 
-    const context = getStatsHistoryContext();
-    const history = context.history;
-    const usingSample = context.usingSample;
-    const hasRealData = context.hasRealData;
-
-    root.appendChild(buildStatsPreviewBar(usingSample, hasRealData));
-
-    if (!history.length){
-      const empty = document.createElement("div");
-      empty.className = "visitorStatsEmpty";
-      empty.innerHTML = "まだ成績がありません。<br>半荘を終えると、直近3半荘ぶんの結果がここに保存されます。<br><br>レイアウト確認だけしたいときは上の「サンプル表示」を押してください。";
-      root.appendChild(empty);
-      return;
-    }
-
+  function buildStatsCards(history){
     const cards = document.createElement("div");
     cards.className = "visitorStatsCards";
 
@@ -1632,8 +1841,10 @@
       cards.appendChild(card);
     });
 
-    root.appendChild(cards);
+    return cards;
+  }
 
+  function buildStatsMetrics(history){
     const totalKyoku = history.reduce((sum, item)=> sum + (Number(item.kyokuCount) || 0), 0);
     const totalAgari = history.reduce((sum, item)=> sum + (Number(item.agari) || 0), 0);
     const totalRiichi = history.reduce((sum, item)=> sum + (Number(item.riichi) || 0), 0);
@@ -1643,12 +1854,13 @@
     const totalFuroAgari = history.reduce((sum, item)=> sum + (Number(item.furoAgariCount) || 0), 0);
     const totalDamaAgari = history.reduce((sum, item)=> sum + (Number(item.damaAgariCount) || 0), 0);
     const rankCounts = [0, 0, 0];
+
     history.forEach((item)=>{
       const idx = Number(item.rankIndex);
       if (idx >= 0 && idx <= 2) rankCounts[idx] += 1;
     });
 
-    const metrics = {
+    return {
       historyCount: history.length,
       totalKyoku,
       totalAgari,
@@ -1669,10 +1881,47 @@
       avgScoreValue: averageFromHistory(history, "scoreValue"),
       avgChip: averageFromHistory(history, "chipCount")
     };
+  }
 
-    const styleScores = buildStyleScores(history, metrics);
-    const donut = buildDonutStyle(metrics);
+  function buildStatsMetricPanel(title, items){
+    const panel = document.createElement("div");
+    panel.className = "visitorStatsTablePanel";
 
+    const heading = document.createElement("div");
+    heading.className = "visitorStatsTableTitle";
+    heading.textContent = title;
+
+    const grid = document.createElement("div");
+    grid.className = "visitorStatsTableGrid";
+
+    items.forEach((item)=>{
+      const cell = document.createElement("div");
+      cell.className = "visitorStatsTableCell";
+
+      const label = document.createElement("div");
+      label.className = "visitorStatsTableLabel";
+      label.textContent = item.label;
+
+      const value = document.createElement("div");
+      value.className = "visitorStatsTableValue";
+      value.textContent = item.value;
+
+      const hint = document.createElement("div");
+      hint.className = "visitorStatsTableHint";
+      hint.textContent = item.hint || "";
+
+      cell.appendChild(label);
+      cell.appendChild(value);
+      cell.appendChild(hint);
+      grid.appendChild(cell);
+    });
+
+    panel.appendChild(heading);
+    panel.appendChild(grid);
+    return panel;
+  }
+
+  function buildStatsGraphsPanel(history, metrics, styleScores, donut){
     const main = document.createElement("div");
     main.className = "visitorStatsMain";
 
@@ -1833,17 +2082,96 @@
 
     main.appendChild(leftPanel);
     main.appendChild(rightStack);
-    root.appendChild(main);
+    return main;
+  }
 
-    const tablePanel = document.createElement("div");
-    tablePanel.className = "visitorStatsTablePanel";
-    const tableTitle = document.createElement("div");
-    tableTitle.className = "visitorStatsTableTitle";
-    tableTitle.textContent = `直近${history.length}半荘の成績`;
-    const tableGrid = document.createElement("div");
-    tableGrid.className = "visitorStatsTableGrid";
+  function renderStatsOverlay(){
+    ensureStatsOverlay();
+    const root = document.getElementById("visitorStatsRoot");
+    if (!root) return;
+    root.innerHTML = "";
 
-    [
+    const context = getStatsHistoryContext();
+    const history = context.history;
+    const usingSample = context.usingSample;
+    const hasRealData = context.hasRealData;
+
+    root.appendChild(buildStatsPreviewBar(usingSample, hasRealData));
+
+    if (!history.length){
+      const empty = document.createElement("div");
+      empty.className = "visitorStatsEmpty";
+      empty.innerHTML = "まだ成績がありません。<br>半荘を終えると、直近3半荘ぶんの結果がここに保存されます。<br><br>レイアウト確認だけしたいときは上の「サンプル表示」を押してください。";
+      root.appendChild(empty);
+      return;
+    }
+
+    const metrics = buildStatsMetrics(history);
+    const styleScores = buildStyleScores(history, metrics);
+    const donut = buildDonutStyle(metrics);
+
+    const tabs = document.createElement("div");
+    tabs.className = "visitorRuleTabs visitorStatsTabs";
+
+    const panels = document.createElement("div");
+    panels.className = "visitorStatsPanels";
+
+    const tabButtons = [];
+    const panelEls = [];
+    const activeKey = ["overview", "graphs", "detail"].includes(activeStatsTabKey) ? activeStatsTabKey : "overview";
+
+    const setActiveTab = (key)=>{
+      activeStatsTabKey = key;
+      tabButtons.forEach((btn)=>{
+        const active = btn.dataset.statsTabKey === key;
+        btn.classList.toggle("isActive", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      panelEls.forEach((panel)=>{
+        panel.classList.toggle("isActive", panel.dataset.statsPanelKey === key);
+      });
+    };
+
+    const tabDefs = [
+      { key: "overview", label: "概要" },
+      { key: "graphs", label: "グラフ" },
+      { key: "detail", label: "詳細" }
+    ];
+
+    tabDefs.forEach((tab)=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "visitorRuleTabBtn visitorStatsTabBtn";
+      btn.textContent = tab.label;
+      btn.dataset.statsTabKey = tab.key;
+      btn.setAttribute("aria-selected", "false");
+      btn.addEventListener("click", ()=> setActiveTab(tab.key));
+      tabButtons.push(btn);
+      tabs.appendChild(btn);
+    });
+
+    const overviewPanel = document.createElement("section");
+    overviewPanel.className = "visitorStatsTabPanel";
+    overviewPanel.dataset.statsPanelKey = "overview";
+    overviewPanel.appendChild(buildStatsCards(history));
+    overviewPanel.appendChild(buildStatsMetricPanel("サマリー", [
+      { label: "一位率", value: formatRate(metrics.rankCounts[0], history.length), hint: "半荘順位" },
+      { label: "平均順位", value: formatAverageRank(metrics.avgRank), hint: "半荘の平均" },
+      { label: "平均スコア", value: formatSignedScoreValue(metrics.avgScoreValue), hint: "精算値ベース" },
+      { label: "平均終了点", value: formatAvgPoint(metrics.avgPoint), hint: "最終持ち点" },
+      { label: "平均チップ", value: `${metrics.avgChip > 0 ? "+" : ""}${metrics.avgChip.toFixed(1)}枚`, hint: "半荘ごとの平均" },
+      { label: "対戦数", value: `${history.length}`, hint: "保存中の半荘数" }
+    ]));
+
+    const graphsPanel = document.createElement("section");
+    graphsPanel.className = "visitorStatsTabPanel";
+    graphsPanel.dataset.statsPanelKey = "graphs";
+    graphsPanel.appendChild(buildStatsGraphsPanel(history, metrics, styleScores, donut));
+
+    const detailPanel = document.createElement("section");
+    detailPanel.className = "visitorStatsTabPanel";
+    detailPanel.dataset.statsPanelKey = "detail";
+    detailPanel.appendChild(buildStatsMetricPanel(`直近${history.length}半荘の成績`, [
       { label: "一位率", value: formatRate(metrics.rankCounts[0], history.length), hint: "半荘順位" },
       { label: "二位率", value: formatRate(metrics.rankCounts[1], history.length), hint: "半荘順位" },
       { label: "三位率", value: formatRate(metrics.rankCounts[2], history.length), hint: "半荘順位" },
@@ -1856,27 +2184,16 @@
       { label: "放銃率", value: formatRate(metrics.totalHoju, metrics.totalKyoku), hint: "総局数基準" },
       { label: "副露率", value: formatRate(metrics.totalFuroKyoku, metrics.totalKyoku), hint: "総局数基準" },
       { label: "平均チップ", value: `${metrics.avgChip > 0 ? "+" : ""}${metrics.avgChip.toFixed(1)}枚`, hint: "半荘ごとの平均" }
-    ].forEach((item)=>{
-      const cell = document.createElement("div");
-      cell.className = "visitorStatsTableCell";
-      const label = document.createElement("div");
-      label.className = "visitorStatsTableLabel";
-      label.textContent = item.label;
-      const value = document.createElement("div");
-      value.className = "visitorStatsTableValue";
-      value.textContent = item.value;
-      const hint = document.createElement("div");
-      hint.className = "visitorStatsTableHint";
-      hint.textContent = item.hint;
-      cell.appendChild(label);
-      cell.appendChild(value);
-      cell.appendChild(hint);
-      tableGrid.appendChild(cell);
-    });
+    ]));
 
-    tablePanel.appendChild(tableTitle);
-    tablePanel.appendChild(tableGrid);
-    root.appendChild(tablePanel);
+    panelEls.push(overviewPanel, graphsPanel, detailPanel);
+    panels.appendChild(overviewPanel);
+    panels.appendChild(graphsPanel);
+    panels.appendChild(detailPanel);
+
+    root.appendChild(tabs);
+    root.appendChild(panels);
+    setActiveTab(activeKey);
   }
 
   function replaceButtonWithClone(btn){
@@ -1974,4 +2291,3 @@
     boot();
   }
 })();
-
