@@ -11,6 +11,62 @@
   const HISTORY_STORAGE_KEY = "mbsanma_visitor_recent_hanchans_v1";
   const TRACKER_STORAGE_KEY = "mbsanma_visitor_current_hanchan_v1";
   const HISTORY_LIMIT = 3;
+  const STATS_PREVIEW_MODE_STORAGE_KEY = "mbsanma_visitor_stats_preview_mode_v1";
+  const SAMPLE_HISTORY_TEMPLATE = [
+    {
+      finishedAt: "2026-04-03T21:40:00.000Z",
+      rankLabel: "1着",
+      rankIndex: 0,
+      point: 46200,
+      chipCount: 5,
+      scoreValue: 47.2,
+      riichi: 4,
+      agari: 6,
+      hoju: 1,
+      kyokuCount: 13,
+      furoKyokuCount: 2,
+      riichiAgariCount: 3,
+      furoAgariCount: 1,
+      damaAgariCount: 2,
+      reason: "半荘終了"
+    },
+    {
+      finishedAt: "2026-04-03T20:58:00.000Z",
+      rankLabel: "2着",
+      rankIndex: 1,
+      point: 38700,
+      chipCount: 1,
+      scoreValue: 8.4,
+      riichi: 3,
+      agari: 4,
+      hoju: 1,
+      kyokuCount: 12,
+      furoKyokuCount: 3,
+      riichiAgariCount: 2,
+      furoAgariCount: 1,
+      damaAgariCount: 1,
+      reason: "半荘終了"
+    },
+    {
+      finishedAt: "2026-04-03T20:12:00.000Z",
+      rankLabel: "3着",
+      rankIndex: 2,
+      point: 25100,
+      chipCount: -3,
+      scoreValue: -24.6,
+      riichi: 2,
+      agari: 3,
+      hoju: 3,
+      kyokuCount: 11,
+      furoKyokuCount: 4,
+      riichiAgariCount: 1,
+      furoAgariCount: 1,
+      damaAgariCount: 1,
+      reason: "半荘終了"
+    }
+  ];
+
+  let statsPreviewMode = loadStatsPreviewMode();
 
   const tracker = loadTracker();
 
@@ -83,6 +139,39 @@
     try{
       localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(Array.isArray(list) ? list.slice(0, HISTORY_LIMIT) : []));
     }catch(e){}
+  }
+  function loadStatsPreviewMode(){
+    try{
+      return localStorage.getItem(STATS_PREVIEW_MODE_STORAGE_KEY) === "1";
+    }catch(e){
+      return false;
+    }
+  }
+
+  function saveStatsPreviewMode(){
+    try{
+      localStorage.setItem(STATS_PREVIEW_MODE_STORAGE_KEY, statsPreviewMode ? "1" : "0");
+    }catch(e){}
+  }
+
+  function setStatsPreviewMode(value){
+    statsPreviewMode = !!value;
+    saveStatsPreviewMode();
+  }
+
+  function getSampleHistory(){
+    return SAMPLE_HISTORY_TEMPLATE.map((item)=> ({ ...item }));
+  }
+
+  function getStatsHistoryContext(){
+    const realHistory = readHistory();
+    const hasRealData = realHistory.length > 0;
+    const usingSample = !!statsPreviewMode;
+    return {
+      history: usingSample ? getSampleHistory() : realHistory,
+      usingSample,
+      hasRealData
+    };
   }
 
   function injectVisitorOverlayStyles(){
@@ -596,204 +685,46 @@
         line-height: 1.75;
         color: rgba(245,247,244,0.82);
       }
-      @media (max-width: 640px){
-        .visitorOverlay{
-          padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) 10px;
-          align-items: stretch;
-        }
-        .visitorPanel{
-          width: 100%;
-          max-height: none;
-          height: 100%;
-          border-radius: 16px;
-          padding: 14px 12px 16px;
-        }
-        .visitorPanelHeader{
-          position: sticky;
-          top: -14px;
-          z-index: 2;
-          margin: -14px -12px 12px;
-          padding: 12px 12px 10px;
-          background: linear-gradient(180deg, rgba(20,32,26,0.98) 0%, rgba(20,32,26,0.94) 72%, rgba(20,32,26,0) 100%);
-          backdrop-filter: blur(8px);
-          align-items: flex-start;
-        }
-        .visitorPanelTitle{
-          font-size: 20px;
-        }
-        .visitorPanelSub{
-          font-size: 11px;
-          line-height: 1.55;
-        }
-        .visitorPanelClose{
-          min-width: 40px;
-          height: 40px;
-          padding: 0 12px;
-          font-size: 12px;
-        }
-        .visitorRuleTabs{
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-          position: sticky;
-          top: 52px;
-          z-index: 1;
-          padding-bottom: 4px;
-          background: linear-gradient(180deg, rgba(20,32,26,0.96) 0%, rgba(20,32,26,0.92) 72%, rgba(20,32,26,0) 100%);
-        }
-        .visitorRuleTabBtn{
-          min-height: 40px;
-          padding: 0 10px;
-          font-size: 12px;
-        }
-        .visitorRulePanelTitle{
-          font-size: 16px;
-        }
-        .visitorRulePanelSub,
-        .visitorRuleCardText,
-        .visitorRuleLineText,
-        .visitorRuleNotice{
-          font-size: 12px;
-          line-height: 1.65;
-        }
-        .visitorRuleCard{
-          padding: 12px;
-          border-radius: 12px;
-        }
-        .visitorRuleCardTitle,
-        .visitorYakuGroupTitle{
-          font-size: 14px;
-          margin-bottom: 6px;
-        }
-        .visitorRuleLine{
-          padding: 9px 10px;
-          border-radius: 10px;
-        }
-        .visitorRuleLineStrong{
-          font-size: 13px;
-        }
-        .visitorRulePills,
-        .visitorYakuList{
-          gap: 6px;
-        }
-        .visitorRulePill,
-        .visitorYakuItem{
-          min-height: 30px;
-          padding: 0 10px;
-          font-size: 12px;
-        }
-        .visitorRuleFootnote{
-          font-size: 11px;
-          line-height: 1.65;
-        }
-        .visitorStatsSection{
-          gap: 12px;
-        }
-        .visitorStatsCards{
-          display: grid;
-          grid-auto-flow: column;
-          grid-auto-columns: minmax(76%, 1fr);
-          grid-template-columns: none;
-          overflow-x: auto;
-          gap: 10px;
-          padding-bottom: 4px;
-          scroll-snap-type: x proximity;
-          -webkit-overflow-scrolling: touch;
-        }
-        .visitorStatsCard{
-          min-height: 124px;
-          padding: 14px;
-          scroll-snap-align: start;
-        }
-        .visitorStatsCardRound{
-          font-size: 11px;
-        }
-        .visitorStatsCardRank{
-          font-size: 24px;
-        }
-        .visitorStatsCardPoint{
-          font-size: 22px;
-          margin-bottom: 6px;
-        }
-        .visitorStatsCardSub{
-          font-size: 12px;
-        }
-        .visitorStatsMain{
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-        .visitorStatsPanel,
-        .visitorStatsMiniPanel,
-        .visitorStatsTablePanel{
-          padding: 14px;
-          border-radius: 16px;
-        }
-        .visitorStatsPanelTitle,
-        .visitorStatsMiniTitle,
-        .visitorStatsTableTitle{
-          font-size: 17px;
-        }
-        .visitorStatsPanelSub{
-          font-size: 11px;
-          line-height: 1.6;
-        }
-        .visitorStyleWrap{
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-        .visitorStyleRadarBox{
-          order: -1;
-        }
-        .visitorStyleRadarSvg{
-          width: 164px;
-          height: 164px;
-        }
-        .visitorStyleScoreRow{
-          font-size: 13px;
-        }
-        .visitorWinSplit{
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-        .visitorDonut{
-          width: 138px;
-          height: 138px;
-        }
-        .visitorDonut::after{
-          inset: 24px;
-        }
-        .visitorLegendRow,
-        .visitorRankBarLabel,
-        .visitorRankBarValue{
-          font-size: 13px;
-        }
-        .visitorRankBarTrack{
-          height: 20px;
-        }
-        .visitorStatsTableGrid{
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-        }
-        .visitorStatsTableCell{
-          min-height: 78px;
-          padding: 10px 9px;
-          border-radius: 12px;
-        }
-        .visitorStatsTableLabel{
-          font-size: 11px;
-        }
-        .visitorStatsTableValue{
-          font-size: 18px;
-        }
-        .visitorStatsTableHint{
-          font-size: 10px;
-        }
-        .visitorStatsEmpty{
-          padding: 16px 14px;
-          font-size: 13px;
-          line-height: 1.7;
-        }
-      }
+
+.visitorStatsPreviewBar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+}
+.visitorStatsPreviewNote{
+  font-size: 12px;
+  line-height: 1.65;
+  color: rgba(245,247,244,0.76);
+}
+.visitorStatsPreviewActions{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.visitorStatsPreviewBtn{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  min-height: 38px;
+  padding: 0 14px;
+  background: rgba(255,255,255,0.05);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.visitorStatsPreviewBtn.isPrimary{
+  border-color: rgba(255,214,111,0.28);
+  background: linear-gradient(180deg, rgba(255,214,111,0.20), rgba(255,214,111,0.10));
+  color: #fff4c9;
+}
       @media (orientation: landscape) and (max-height: 520px){
         .visitorOverlay{
           padding: 10px;
@@ -1608,18 +1539,57 @@
     };
   }
 
+  function buildStatsPreviewBar(usingSample, hasRealData){
+    const wrap = document.createElement("div");
+    wrap.className = "visitorStatsPreviewBar";
+
+    const note = document.createElement("div");
+    note.className = "visitorStatsPreviewNote";
+    if (usingSample){
+      note.innerHTML = hasRealData
+        ? "見た目確認用の<strong>サンプル成績</strong>を表示中です。"
+        : "まだ実データが無いため、見た目確認用の<strong>サンプル成績</strong>を表示中です。";
+    } else {
+      note.textContent = "実データを表示中です。必要ならサンプル成績に切り替えてレイアウト確認できます。";
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "visitorStatsPreviewActions";
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "visitorStatsPreviewBtn isPrimary";
+    toggleBtn.textContent = usingSample
+      ? (hasRealData ? "実データに戻す" : "サンプルを閉じる")
+      : "サンプル表示";
+    toggleBtn.addEventListener("click", ()=>{
+      setStatsPreviewMode(!usingSample);
+      renderStatsOverlay();
+    });
+
+    actions.appendChild(toggleBtn);
+
+    wrap.appendChild(note);
+    wrap.appendChild(actions);
+    return wrap;
+  }
   function renderStatsOverlay(){
     ensureStatsOverlay();
     const root = document.getElementById("visitorStatsRoot");
     if (!root) return;
     root.innerHTML = "";
 
-    const history = readHistory();
+    const context = getStatsHistoryContext();
+    const history = context.history;
+    const usingSample = context.usingSample;
+    const hasRealData = context.hasRealData;
+
+    root.appendChild(buildStatsPreviewBar(usingSample, hasRealData));
 
     if (!history.length){
       const empty = document.createElement("div");
       empty.className = "visitorStatsEmpty";
-      empty.innerHTML = "まだ成績がありません。<br>半荘を終えると、直近3半荘ぶんの結果がここに保存されます。";
+      empty.innerHTML = "まだ成績がありません。<br>半荘を終えると、直近3半荘ぶんの結果がここに保存されます。<br><br>レイアウト確認だけしたいときは上の「サンプル表示」を押してください。";
       root.appendChild(empty);
       return;
     }
@@ -2004,3 +1974,4 @@
     boot();
   }
 })();
+
