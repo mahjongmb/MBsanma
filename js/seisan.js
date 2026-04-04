@@ -150,6 +150,106 @@ function addDelta(delta, seatIndex, amount){
   delta[seatIndex] = (delta[seatIndex] | 0) + (amount | 0);
 }
 
+function getPreviousSeatIndexForSettlement(seatIndex){
+  if (seatIndex !== 0 && seatIndex !== 1 && seatIndex !== 2) return null;
+  return (seatIndex + 2) % 3;
+}
+
+function getTobiBustSeatIndexes(afterScores){
+  const list = [];
+  const scoresArr = Array.isArray(afterScores) ? afterScores : [];
+  for (let seat = 0; seat < 3; seat++){
+    const value = Number(scoresArr[seat]) || 0;
+    if (value <= 0) list.push(seat);
+  }
+  return list;
+}
+
+function getRonTobiRecipientSeatFromSettlement(settlement, bustSeat){
+  if (!settlement) return null;
+
+  if (Array.isArray(settlement.agariEntries) && settlement.agariEntries.length > 0){
+    const winnerSeats = settlement.agariEntries
+      .map((entry)=> entry && entry.winnerSeatIndex)
+      .filter((seat)=> seat === 0 || seat === 1 || seat === 2);
+
+    if (winnerSeats.length <= 0) return null;
+    if (winnerSeats.length === 1) return winnerSeats[0];
+
+    const kamichaSeat = getPreviousSeatIndexForSettlement(bustSeat);
+    if (kamichaSeat === 0 || kamichaSeat === 1 || kamichaSeat === 2){
+      if (winnerSeats.includes(kamichaSeat)) return kamichaSeat;
+    }
+
+    const headSeat = settlement.headEntry && (settlement.headEntry.winnerSeatIndex === 0 || settlement.headEntry.winnerSeatIndex === 1 || settlement.headEntry.winnerSeatIndex === 2)
+      ? settlement.headEntry.winnerSeatIndex
+      : null;
+    if (headSeat != null && winnerSeats.includes(headSeat)) return headSeat;
+
+    return winnerSeats[0];
+  }
+
+  if (settlement.winnerSeatIndex === 0 || settlement.winnerSeatIndex === 1 || settlement.winnerSeatIndex === 2){
+    return settlement.winnerSeatIndex;
+  }
+
+  return null;
+}
+
+function getRyukyokuTobiRecipientSeatFromSettlement(settlement, bustSeat){
+  if (!settlement || !Array.isArray(settlement.tenpaiSeats)) return null;
+
+  const tenpaiSeats = settlement.tenpaiSeats.filter((seat)=> seat === 0 || seat === 1 || seat === 2);
+  if (tenpaiSeats.length <= 0) return null;
+  if (tenpaiSeats.length === 1) return tenpaiSeats[0];
+
+  const kamichaSeat = getPreviousSeatIndexForSettlement(bustSeat);
+  if (kamichaSeat === 0 || kamichaSeat === 1 || kamichaSeat === 2){
+    if (tenpaiSeats.includes(kamichaSeat)) return kamichaSeat;
+  }
+
+  return tenpaiSeats[0];
+}
+
+function getTobiChipRecipientSeatFromSettlement(settlement, bustSeat){
+  if (!settlement) return null;
+  if (bustSeat !== 0 && bustSeat !== 1 && bustSeat !== 2) return null;
+
+  if (settlement.type === "agari"){
+    if (settlement.winType === "tsumo"){
+      return (settlement.winnerSeatIndex === 0 || settlement.winnerSeatIndex === 1 || settlement.winnerSeatIndex === 2)
+        ? settlement.winnerSeatIndex
+        : null;
+    }
+
+    if (settlement.winType === "ron"){
+      return getRonTobiRecipientSeatFromSettlement(settlement, bustSeat);
+    }
+  }
+
+  if (settlement.type === "ryukyoku"){
+    return getRyukyokuTobiRecipientSeatFromSettlement(settlement, bustSeat);
+  }
+
+  return null;
+}
+
+function applyTobiChipStatsFromSettlement(settlement){
+  if (!settlement || !Array.isArray(settlement.afterScores)) return;
+
+  const bustSeats = getTobiBustSeatIndexes(settlement.afterScores);
+  if (bustSeats.length <= 0) return;
+
+  for (const bustSeat of bustSeats){
+    const recipientSeat = getTobiChipRecipientSeatFromSettlement(settlement, bustSeat);
+    if (recipientSeat !== 0 && recipientSeat !== 1 && recipientSeat !== 2) continue;
+    if (recipientSeat === bustSeat) continue;
+
+    addHanchanEndSeatStatSafe(bustSeat, "chip", -1);
+    addHanchanEndSeatStatSafe(recipientSeat, "chip", 1);
+  }
+}
+
 function buildAgariSettlement(){
   const winner = (typeof lastAgariWinnerSeatIndex === "number") ? lastAgariWinnerSeatIndex : null;
   const winType = lastAgariType;
@@ -491,6 +591,7 @@ function applyHanchanSeatStatsFromSettlement(settlement){
     for (const entry of settlement.agariEntries){
       applyHanchanChipStatsFromEntry(entry);
     }
+    applyTobiChipStatsFromSettlement(settlement);
     return;
   }
 
@@ -502,6 +603,8 @@ function applyHanchanSeatStatsFromSettlement(settlement){
       ronTile: (settlement.headEntry && settlement.headEntry.ronTile) ? settlement.headEntry.ronTile : null
     });
   }
+
+  applyTobiChipStatsFromSettlement(settlement);
 }
 
 function applyPendingRoundSettlement(){
@@ -662,7 +765,9 @@ function getHanchanUmaByRank(rows){
 }
 
 function calcHanchanFinalScoreValue(point, rankIndex, rows){
-  const base = ((Number(point) || 0) - 40000) / 1000;
+  const rawPoint = Number(point) || 0;
+  const scorePoint = Math.max(0, rawPoint);
+  const base = (scorePoint - 40000) / 1000;
   const umaByRank = getHanchanUmaByRank(rows);
   return base + (Number(umaByRank[rankIndex]) || 0);
 }
