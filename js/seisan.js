@@ -558,6 +558,15 @@ function getHanchanEndReasonAfterSettlement(settlement){
     }
   }
 
+  for (let seat = 0; seat < afterScores.length; seat++){
+    if ((afterScores[seat] | 0) >= 80000){
+      return {
+        end: true,
+        reason: `${typeof resultSeatName === "function" ? resultSeatName(seat) : ("席" + seat)}が80000点到達`
+      };
+    }
+  }
+
   if (roundWind === "南" && (roundNumber | 0) === 3){
     const dealerSeat = (typeof eastSeatIndex === "number") ? eastSeatIndex : 0;
     let dealerKeeps = false;
