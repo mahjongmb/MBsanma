@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SANMA LAB / 牌譜再生</title>
+  <meta name="description" content="選択した半荘ログを牌譜再生するページです。" />
+  <style>
+    :root{
+      --bg:#08120e;
+      --bg2:#103126;
+      --panel:rgba(8,20,15,0.82);
+      --line:rgba(255,255,255,0.12);
+      --text:#f6f7f3;
+      --muted:rgba(246,247,243,0.74);
+      --gold:#d9bb72;
+      --gold-strong:#f3d78e;
+      --shadow:0 18px 54px rgba(0,0,0,0.34);
+      --blue-card:linear-gradient(180deg, rgba(20,35,62,0.88), rgba(24,34,58,0.82));
+    }
+    *{ box-sizing:border-box; }
+    html, body{ margin:0; min-height:100%; }
+    body{
+      min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at 50% 14%, rgba(241,212,141,0.18), transparent 22%),radial-gradient(circle at 50% 100%, rgba(31,94,67,0.28), transparent 34%),linear-gradient(180deg, var(--bg2) 0%, var(--bg) 58%, #050c09 100%);
+      overflow-x:hidden;
+    }
+    body::before, body::after{ content:""; position:fixed; pointer-events:none; border-radius:50%; filter:blur(2px); opacity:0.58; }
+    body::before{ width:360px;height:360px;top:-120px;left:-120px;background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 68%); }
+    body::after{ width:320px;height:320px;right:-100px;bottom:-100px;background:radial-gradient(circle, rgba(217,187,114,0.18), transparent 68%); }
+    a, button, select, input{ color:inherit; font:inherit; }
+    .page{ min-height:100vh; padding:24px; display:grid; place-items:center; }
+    .panel{ width:min(100%, 1160px); padding:24px 24px 22px; border-radius:30px; background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)), var(--panel); border:1px solid var(--line); box-shadow:var(--shadow); backdrop-filter:blur(10px); position:relative; overflow:hidden; }
+    .panel::before{ content:""; position:absolute; inset:-140px auto auto 50%; width:320px;height:320px; transform:translateX(-50%); border-radius:50%; background:radial-gradient(circle, rgba(217,187,114,0.16), transparent 70%); pointer-events:none; }
+    .inner{ position:relative; z-index:1; }
+    .topBar{ display:flex; align-items:flex-start; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px; }
+    .titleBlock{ display:grid; gap:8px; }
+    .kicker{ font-size:12px; font-weight:800; letter-spacing:0.22em; color:var(--gold-strong); }
+    .title{ font-size:clamp(34px, 6vw, 62px); font-weight:900; line-height:1; letter-spacing:0.04em; text-shadow:0 10px 28px rgba(0,0,0,0.24); }
+    .sub{ font-size:clamp(18px, 2.8vw, 26px); font-weight:800; color:rgba(255,255,255,0.92); }
+    .topActions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .backBtn,.accountBadge,.controlBtn,.select,.speedSelect{ min-height:42px; border-radius:16px; }
+    .backBtn,.controlBtn{ appearance:none; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); padding:0 16px; cursor:pointer; font-size:14px; font-weight:800; transition:transform 0.16s ease, background 0.16s ease, border-color 0.16s ease; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    .backBtn:hover,.controlBtn:hover{ transform:translateY(-1px); }
+    .backBtn{ background:linear-gradient(180deg, #f2d58f 0%, #d9bb72 100%); border-color:transparent; color:#1e1402; }
+    .accountBadge{ display:inline-flex; align-items:center; justify-content:center; padding:0 14px; border:1px solid rgba(255,214,111,0.20); background:rgba(255,214,111,0.08); color:#fff3c5; font-size:13px; font-weight:900; }
+    .lead{ margin:0 0 18px; font-size:14px; line-height:1.9; color:var(--muted); }
+    .summaryCard,.controlCard,.currentCard,.sideCard,.logCard,.emptyCard{ border-radius:18px; border:1px solid rgba(255,255,255,0.12); background:var(--blue-card); padding:14px; }
+    .summaryCard{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .summaryTitle{ font-size:18px; font-weight:900; color:#fff0bf; }
+    .summaryMeta{ font-size:12px; line-height:1.7; color:rgba(245,247,244,0.76); }
+    .summaryBadges{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .summaryBadge{ display:inline-flex; align-items:center; min-height:30px; padding:0 10px; border-radius:999px; font-size:11px; font-weight:900; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:rgba(245,247,244,0.86); }
+    .replayLayout{ display:grid; grid-template-columns:minmax(0, 1.12fr) minmax(320px, 0.88fr); gap:14px; align-items:start; }
+    .leftStack,.rightStack{ display:grid; gap:14px; }
+    .sectionTitle{ font-size:18px; font-weight:900; color:#ffffff; margin-bottom:12px; }
+    .controlGrid{ display:grid; grid-template-columns:1fr auto; gap:10px; margin-bottom:12px; }
+    .field{ display:grid; gap:6px; }
+    .label{ font-size:12px; font-weight:800; color:rgba(245,247,244,0.76); }
+    .select,.speedSelect{ width:100%; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.05); color:#f5f7f4; padding:0 12px; }
+    .rangeField{ display:grid; gap:8px; margin-bottom:12px; }
+    .range{ width:100%; accent-color:#d9bb72; }
+    .controlRow{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .controlBtn:disabled{ opacity:0.45; cursor:default; transform:none; }
+    .controlBtn.isPrimary{ border-color:rgba(255,214,111,0.28); background:linear-gradient(180deg, rgba(255,214,111,0.20), rgba(255,214,111,0.10)); color:#fff4c9; }
+    .stepMeta{ font-size:12px; line-height:1.6; color:rgba(245,247,244,0.74); }
+    .currentTitle{ font-size:16px; font-weight:900; color:#fff3c5; margin-bottom:6px; }
+    .currentSub,.currentText{ font-size:13px; line-height:1.75; color:rgba(245,247,244,0.88); }
+    .currentSub{ color:rgba(245,247,244,0.72); margin-bottom:6px; }
+    .infoList,.trailList,.logEventList{ display:grid; gap:8px; }
+    .infoRow{ display:grid; grid-template-columns:92px minmax(0, 1fr); gap:8px; align-items:start; }
+    .infoLabel{ font-size:11px; font-weight:800; color:rgba(245,247,244,0.62); }
+    .infoValue{ font-size:12px; line-height:1.65; color:rgba(245,247,244,0.90); word-break:break-word; }
+    .trailRow,.logEventRow{ border-radius:12px; border:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.03); padding:10px 12px; display:grid; gap:4px; }
+    .trailRow.isCurrent{ border-color:rgba(255,214,111,0.24); background:rgba(255,214,111,0.08); }
+    .trailTop,.logEventTop{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+    .trailTitle,.logEventType{ font-size:12px; font-weight:900; color:#fff3c5; }
+    .trailSeq,.logEventSeq{ font-size:11px; color:rgba(245,247,244,0.58); }
+    .trailSub,.trailText,.logEventSub,.logEventText,.emptyCard{ font-size:12px; line-height:1.7; color:rgba(245,247,244,0.82); }
+    .footerNote{ margin-top:18px; text-align:center; font-size:12px; color:rgba(255,255,255,0.38); letter-spacing:0.10em; }
+    @media (max-width: 960px){ .replayLayout{ grid-template-columns:1fr; } }
+    @media (max-width: 760px){ .page{ padding:16px; } .panel{ padding:20px 16px 18px; border-radius:24px; } .controlGrid{ grid-template-columns:1fr; } .topActions{ width:100%; justify-content:stretch; } .backBtn,.accountBadge{ flex:1 1 0; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="panel" aria-label="牌譜再生ビュー">
+      <div class="inner">
+        <div class="topBar">
+          <div class="titleBlock">
+            <div class="kicker">SANMA REPLAY / VIEW</div>
+            <div class="title">SANMA LAB</div>
+            <div class="sub">牌譜再生</div>
+          </div>
+          <div class="topActions">
+            <a class="backBtn" href="replay_app.html">一覧に戻る</a>
+            <div id="replayAccountBadge" class="accountBadge">ローカル</div>
+          </div>
+        </div>
+
+        <p class="lead">
+          選択した半荘の牌譜再生ページです。東1局1手目から順に追えます。<br>
+          いまはまず流れ確認を優先して、あとから盤面プレビューや分析導線を足していきます。
+        </p>
+
+        <section id="matchSummaryCard" class="summaryCard"></section>
+
+        <div class="replayLayout">
+          <div class="leftStack">
+            <section class="controlCard">
+              <div class="sectionTitle">再生操作</div>
+              <div class="controlGrid">
+                <label class="field">
+                  <span class="label">局</span>
+                  <select id="kyokuSelect" class="select"></select>
+                </label>
+                <label class="field">
+                  <span class="label">再生速度</span>
+                  <select id="speedSelect" class="speedSelect">
+                    <option value="1000">遅め</option>
+                    <option value="700" selected>標準</option>
+                    <option value="450">速め</option>
+                    <option value="250">最速</option>
+                  </select>
+                </label>
+              </div>
+              <div class="rangeField">
+                <div class="label">手順</div>
+                <input id="stepRange" class="range" type="range" min="0" max="0" step="1" value="0">
+              </div>
+              <div class="controlRow">
+                <button id="firstStepBtn" type="button" class="controlBtn">先頭</button>
+                <button id="prevStepBtn" type="button" class="controlBtn">1手戻る</button>
+                <button id="playToggleBtn" type="button" class="controlBtn isPrimary">再生</button>
+                <button id="nextStepBtn" type="button" class="controlBtn">1手進む</button>
+                <button id="lastStepBtn" type="button" class="controlBtn">末尾</button>
+              </div>
+              <div id="stepMeta" class="stepMeta"></div>
+            </section>
+
+            <section id="currentCard" class="currentCard"></section>
+          </div>
+
+          <div class="rightStack">
+            <section class="sideCard">
+              <div class="sectionTitle">局開始情報</div>
+              <div id="startInfoList" class="infoList"></div>
+            </section>
+
+            <section class="sideCard">
+              <div class="sectionTitle">前後の流れ</div>
+              <div id="trailList" class="trailList"></div>
+            </section>
+          </div>
+        </div>
+
+        <section class="logCard">
+          <div class="sectionTitle">現在局のログ</div>
+          <div id="eventLogList" class="logEventList"></div>
+        </section>
+
+        <div class="footerNote">SANMA LAB REPLAY VIEW</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/match_log.js"></script>
+  <script src="js/log_normalizer.js"></script>
+  <script src="js/replay_view_app_ui.js"></script>
+</body>
+</html>
