@@ -826,10 +826,10 @@
         [
           createMetricCard("対象半荘", formatCount(summary.scope.includedMatchCount), "条件に合う半荘"),
           createMetricCard("対象局", formatCount(summary.overall.kyokuCount), "局ベース"),
-          createMetricCard("集計件数", formatCount(summary.overall.sampleKyokuCount), "全体傾向の集計数"),
-          createMetricCard("モード内訳", formatModeCount(summary), "検証 / 対局 / 未分類"),
-          createMetricCard("親件数", formatCount(summary.overall.dealerSampleCount), "集計対象内"),
-          createMetricCard("子件数", formatCount(summary.overall.nondealerSampleCount), "集計対象内")
+          createMetricCard("対象和了件数", formatCount(summary.agari.count), "和了全体"),
+          createMetricCard("対象リーチ件数", formatCount(summary.riichi.count), "リーチ全体"),
+          createMetricCard("対象放銃件数", formatCount(summary.hoju.count), "放銃全体"),
+          createMetricCard("対象ツモ和了件数", formatCount(summary.agari.tsumoCount), "ツモ和了のみ")
         ].forEach((card)=> grid.appendChild(card));
         section.appendChild(grid);
         return section;
@@ -961,9 +961,13 @@
               createMetricCard("被ツモ率", formatRate(summary.hitByTsumo.rate), "全局基準"),
               createMetricCard("流局率", formatRate(summary.ryukyoku.rate), "全局基準"),
               createMetricCard("横移動率", formatRate(summary.horizontal.rate), "自分が無関係で終わる率"),
-              createMetricCard("平均打点", formatAvgPoint(summary.overall.averagePoint), "純粋なアガリ打点の平均"),
-              createMetricCard("被ツモ時平均失点", formatAvgPoint(summary.overall.averageHitByTsumoPoint), "被ツモ時の実支払い平均"),
-              createMetricCard("放銃時平均失点", formatAvgPoint(summary.overall.averageHojuPoint), "放銃した相手手の純粋な打点"),
+              createMetricCard("平均打点", formatAvgPoint(summary.overall.averagePoint), "ツモ・ロンを含む和了全体"),
+              createMetricCard("和了時平均チップ枚数", formatAvgCount(summary.overall.averageAgariChipCount, "枚"), "和了した手のみ"),
+              createMetricCard("1着時平均スコア", formatAvgScore(summary.overall.averageRank1Score), "チップ込み"),
+              createMetricCard("2着時平均スコア", formatAvgScore(summary.overall.averageRank2Score), "チップ込み"),
+              createMetricCard("3着時平均スコア", formatAvgScore(summary.overall.averageRank3Score), "チップ込み"),
+              createMetricCard("被ツモ時平均失点", formatAvgPoint(summary.overall.averageHitByTsumoPoint), "被ツモした手の平均打点"),
+              createMetricCard("放銃時平均失点", formatAvgPoint(summary.overall.averageHojuPoint), "放銃した手の平均打点"),
               createMetricCard("平均ドラ枚数", formatAvgCount(summary.overall.averageDoraCount, "枚"), "和了詳細ありの分のみ")
             ]
           ),
@@ -973,21 +977,21 @@
             "和了したときの内訳と打点の傾向を見るタブです。ツモ寄りかロン寄りか、リーチや副露でどれくらい上がれているかを確認できます。",
             [
               createMetricCard("和了率", formatRate(summary.agari.rate), "全局基準"),
-              createMetricCard("和了時ツモ割合", formatRate(summary.agari.tsumoRate), "和了局基準"),
-              createMetricCard("和了時ロン割合", formatRate(summary.agari.ronRate), "和了局基準"),
+              createMetricCard("和了内訳ツモ割合", formatRate(summary.agari.tsumoRate), "和了局基準"),
+              createMetricCard("和了内訳ロン割合", formatRate(summary.agari.ronRate), "和了局基準"),
               createMetricCard("親和了割合", formatRate(summary.agari.dealerRate), "和了局基準"),
-              createMetricCard("和了時リーチ割合", formatRate(summary.agari.riichiRate), "和了局基準"),
-              createMetricCard("和了時副露割合", formatRate(summary.agari.openRate), "和了局基準"),
-              createMetricCard("和了時ダマ割合", formatRate(summary.agari.damaRate), "和了局基準（暫定）"),
-              createMetricCard("平均打点", formatAvgPoint(summary.agari.averagePoint), "純粋なアガリ打点の平均"),
-              createMetricCard("リーチ時平均打点", formatAvgPoint(summary.agari.averagePointRiichi), "リーチ和了の純粋な打点"),
-              createMetricCard("リーチ時和了率", formatRate(summary.agari.riichiAgariRate), "リーチした局基準"),
-              createMetricCard("副露時平均打点", formatAvgPoint(summary.agari.averagePointOpen), "副露和了の純粋な打点"),
-              createMetricCard("副露時和了率", formatRate(summary.agari.openAgariRate), "副露した局基準"),
-              createMetricCard("ダマ平均打点", formatAvgPoint(summary.agari.averagePointDama), "ダマ和了のみ（暫定）"),
-              createMetricCard("ダマ時和了率", formatRate(summary.agari.damaAgariRate), "面前かつ非リーチ局基準（暫定）"),
-              createMetricCard("ツモ平均打点", formatAvgPoint(summary.agari.averagePointTsumo), "ツモ和了の純粋な打点"),
-              createMetricCard("ロン平均打点", formatAvgPoint(summary.agari.averagePointRon), "ロン和了の純粋な打点")
+              createMetricCard("和了内訳リーチ割合", formatRate(summary.agari.riichiRate), "和了局基準"),
+              createMetricCard("和了内訳副露割合", formatRate(summary.agari.openRate), "和了局基準"),
+              createMetricCard("和了内訳ダマ割合", formatRate(summary.agari.damaRate), "和了局基準"),
+              createMetricCard("平均打点", formatAvgPoint(summary.agari.averagePoint), "和了全体"),
+              createMetricCard("リーチ時平均打点", formatAvgPoint(summary.agari.averagePointRiichi), "リーチ和了のみ"),
+              createMetricCard("リーチ時和了率", formatRate(summary.agari.riichiAgariRate), "リーチ局基準"),
+              createMetricCard("副露時平均打点", formatAvgPoint(summary.agari.averagePointOpen), "副露和了のみ"),
+              createMetricCard("副露時和了率", formatRate(summary.agari.openAgariRate), "副露局基準"),
+              createMetricCard("ダマ平均打点", formatAvgPoint(summary.agari.averagePointDama), "ダマ和了のみ"),
+              createMetricCard("ダマ時和了率", formatRate(summary.agari.damaAgariRate), "ダマ局基準"),
+              createMetricCard("ツモ平均打点", formatAvgPoint(summary.agari.averagePointTsumo), "ツモ和了のみ"),
+              createMetricCard("ロン平均打点", formatAvgPoint(summary.agari.averagePointRon), "ロン和了のみ")
             ]
           ),
           createTabPanel(
@@ -999,10 +1003,10 @@
               createMetricCard("親への放銃割合", formatRate(summary.hoju.dealerWinnerRate), "放銃局基準"),
               createMetricCard("リーチへの放銃率", formatRate(summary.hoju.riichiRate), "放銃局基準"),
               createMetricCard("副露への放銃率", formatRate(summary.hoju.openRate), "放銃局基準"),
-              createMetricCard("放銃時平均失点", formatAvgPoint(summary.hoju.averagePoint), "放銃した相手手の純粋な打点"),
+              createMetricCard("放銃時平均失点", formatAvgPoint(summary.hoju.averagePoint), "放銃した手の平均打点"),
               createMetricCard("放銃時聴牌率", formatRate(summary.hoju.tenpaiRate), "記録が残っている分のみ"),
               createMetricCard("被ツモ率", formatRate(summary.hitByTsumo.rate), "全局基準"),
-              createMetricCard("被ツモ時平均失点", formatAvgPoint(summary.hitByTsumo.averagePoint), "被ツモ時の実支払い平均")
+              createMetricCard("被ツモ時平均失点", formatAvgPoint(summary.hitByTsumo.averagePoint), "被ツモした手の平均打点")
             ]
           ),
           createTabPanel(
