@@ -249,26 +249,43 @@
     return safeNumber(safeArray(settlement.delta)[seatIndex], 0) === 0;
   }
 
-  function scoreInfoToPoint(scoreInfo){
+  function scoreInfoToPoint(scoreInfo, winType){
     if (!scoreInfo || typeof scoreInfo !== "object") return null;
-    const candidates = [
-      scoreInfo.totalPoint,
-      scoreInfo.point,
-      scoreInfo.basicPoint,
-      scoreInfo.ronPoint,
-      scoreInfo.displayPoint,
-      scoreInfo.finalPoint,
-      scoreInfo.basePoint
-    ];
-    for (const value of candidates){
+
+    const normalizedWinType = String(winType || "").toLowerCase();
+
+    const pureCandidates = [];
+    if (normalizedWinType === "ron"){
+      pureCandidates.push(scoreInfo.point, scoreInfo.ronPoint);
+    } else if (normalizedWinType === "tsumo"){
+      pureCandidates.push(scoreInfo.point);
+    } else {
+      pureCandidates.push(scoreInfo.point, scoreInfo.ronPoint);
+    }
+
+    for (const value of pureCandidates){
       const n = Number(value);
       if (Number.isFinite(n) && n > 0) return n;
     }
+
     const ko = Number(scoreInfo.tsumoPointKo);
     const oya = Number(scoreInfo.tsumoPointOya);
     if (Number.isFinite(ko) || Number.isFinite(oya)){
       return (Number.isFinite(ko) ? ko * 2 : 0) + (Number.isFinite(oya) ? oya : 0);
     }
+
+    const fallbackCandidates = [
+      scoreInfo.totalPoint,
+      scoreInfo.displayPoint,
+      scoreInfo.finalPoint,
+      scoreInfo.basicPoint,
+      scoreInfo.basePoint
+    ];
+    for (const value of fallbackCandidates){
+      const n = Number(value);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+
     return null;
   }
 
@@ -276,7 +293,7 @@
     if (!entry || typeof entry !== "object") return null;
     const directPoint = Number(entry.pointValue);
     if (Number.isFinite(directPoint) && directPoint > 0) return directPoint;
-    return scoreInfoToPoint(entry.scoreInfo);
+    return scoreInfoToPoint(entry.scoreInfo, entry.winType);
   }
 
   function getSeatAgariPoint(settlement, seatIndex){
@@ -313,9 +330,9 @@
 
   function getSeatHitByTsumoPoint(settlement, seatIndex){
     if (!isSeatHitByTsumo(settlement, seatIndex)) return null;
-    const tsumoEntry = getAgariEntries(settlement).find((entry)=> String(entry && entry.winType || settlement.winType || "") === "tsumo");
-    const point = getPointFromAgariEntry(tsumoEntry || settlement);
-    return Number.isFinite(point) && point > 0 ? point : null;
+    const delta = safeNumber(safeArray(settlement && settlement.delta)[seatIndex], null);
+    if (Number.isFinite(delta) && delta < 0) return Math.abs(delta);
+    return null;
   }
 
   function listYakuKeys(detail){
@@ -665,13 +682,6 @@
     return null;
   }
 
-  function computeChipIncludedScore(score, chips){
-    const baseScore = Number(score);
-    if (!Number.isFinite(baseScore)) return null;
-    const chipValue = Number(chips);
-    return baseScore + (Number.isFinite(chipValue) ? chipValue * 2 : 0);
-  }
-
   function getMatchSummaryInfo(log, seatIndex){
     const summary = log && log.summary && typeof log.summary === "object" ? log.summary : {};
     const endInfo = summary.endInfo && typeof summary.endInfo === "object" ? summary.endInfo : {};
@@ -890,10 +900,6 @@
         nondealerSampleCount: 0,
         horizontalRate: null,
         averagePoint: null,
-        averageAgariChipCount: null,
-        averageRank1Score: null,
-        averageRank2Score: null,
-        averageRank3Score: null,
         averageHojuPoint: null,
         averageHitByTsumoPoint: null,
         averageDoraCount: null
@@ -999,7 +1005,6 @@
     const riichiWaitTileCounts = [];
     const openCountInOpenSamples = [];
     const agariPointList = [];
-    const agariChipCountList = [];
     const agariPointRiichiList = [];
     const agariPointOpenList = [];
     const agariPointDamaList = [];
@@ -1008,9 +1013,6 @@
     const agariDoraCounts = [];
     const hojuPointList = [];
     const hitByTsumoPointList = [];
-    const rank1ScoreList = [];
-    const rank2ScoreList = [];
-    const rank3ScoreList = [];
 
     const agariYakuCompositeCounts = {
       tanyao: 0,
@@ -1039,15 +1041,6 @@
       summary.matchCounts.included += 1;
       summary.matchCounts[matchMode] = (summary.matchCounts[matchMode] || 0) + 1;
       summary.matchCounts[sessionMode] = (summary.matchCounts[sessionMode] || 0) + 1;
-
-      [0, 1, 2].forEach((seatIndex)=> {
-        const matchInfo = getMatchSummaryInfo(log, seatIndex);
-        const chipIncludedScore = computeChipIncludedScore(matchInfo.score, matchInfo.chips);
-        if (!Number.isFinite(chipIncludedScore)) return;
-        if (matchInfo.rank === 1) rank1ScoreList.push(chipIncludedScore);
-        else if (matchInfo.rank === 2) rank2ScoreList.push(chipIncludedScore);
-        else if (matchInfo.rank === 3) rank3ScoreList.push(chipIncludedScore);
-      });
 
       safeArray(log && log.kyokus).forEach((kyoku)=> {
         const includedSeats = getIncludedSeats(kyoku, normalizedFilters.dealer);
@@ -1111,11 +1104,6 @@
                 if (winType === "tsumo") agariPointTsumoList.push(point);
                 if (winType === "ron") agariPointRonList.push(point);
                 if (point >= 8000) summary.agari.manganOrMoreCount += 1;
-              }
-
-              const agariChipDelta = getSeatChipDelta(settlement, seatIndex);
-              if (Number.isFinite(agariChipDelta)){
-                agariChipCountList.push(Math.abs(agariChipDelta));
               }
 
               const detailSource = entry || settlement;
@@ -1236,10 +1224,6 @@
 
     summary.overall.horizontalRate = summary.horizontal.rate;
     summary.overall.averagePoint = summary.agari.averagePoint;
-    summary.overall.averageAgariChipCount = averageFrom(agariChipCountList);
-    summary.overall.averageRank1Score = averageFrom(rank1ScoreList);
-    summary.overall.averageRank2Score = averageFrom(rank2ScoreList);
-    summary.overall.averageRank3Score = averageFrom(rank3ScoreList);
     summary.overall.averageHojuPoint = summary.hoju.averagePoint;
     summary.overall.averageHitByTsumoPoint = summary.hitByTsumo.averagePoint;
     summary.overall.averageDoraCount = summary.agari.averageDoraCount;
