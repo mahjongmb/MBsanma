@@ -223,7 +223,9 @@
         }catch(e){}
 
         try{
-          if (typeof __postAgariStage !== "undefined"){
+          if (typeof setPostAgariStageToOverlay === "function"){
+            setPostAgariStageToOverlay();
+          } else if (typeof __postAgariStage !== "undefined"){
             __postAgariStage = "overlay";
           }
         }catch(e){}
