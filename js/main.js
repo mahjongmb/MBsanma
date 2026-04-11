@@ -23,7 +23,7 @@ const GAME_SPEED_PROFILE_NORMAL = Object.freeze({
 });
 
 const GAME_SPEED_PROFILE_VERIFY_FAST = Object.freeze({
-  cpuTurnDelayMs: 60,
+  cpuTurnDelayMs: 35,
   playerTurnDrawDelayMs: 60,
   playerAutoDiscardDelayMs: 70,
   playerSpecialActionDelayMs: 70,
