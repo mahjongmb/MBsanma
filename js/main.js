@@ -206,13 +206,23 @@ function getPostAgariAutoAdvanceDelayMs(){
   return getGameSpeedMs("postAgariDelayMs", PLAYER_AI_POST_AGARI_DELAY_MS);
 }
 
-function schedulePlayerAiPostAgariAdvance(stage){
+function getPostAgariOverlayRetryDelayMs(){
+  const base = getPostAgariAutoAdvanceDelayMs();
+  if (!Number.isFinite(base) || base <= 0) return 80;
+  return Math.max(40, Math.min(120, base));
+}
+
+function schedulePlayerAiPostAgariAdvance(stage, delayMs){
   if (!isPlayerPostAgariAutoAdvanceEnabled()) return;
 
   if (__autoNextTimer){
     clearTimeout(__autoNextTimer);
     __autoNextTimer = null;
   }
+
+  const nextDelayMs = (Number.isFinite(delayMs) && delayMs >= 0)
+    ? delayMs
+    : getPostAgariAutoAdvanceDelayMs();
 
   __autoNextTimer = setTimeout(()=>{
     __autoNextTimer = null;
@@ -235,10 +245,13 @@ function schedulePlayerAiPostAgariAdvance(stage){
 
     if (stage === "next"){
       if (__postAgariStage !== "nextArmed") return;
-      if (isAnyOverlayVisible()) return;
+      if (isAnyOverlayVisible()){
+        schedulePlayerAiPostAgariAdvance("next", getPostAgariOverlayRetryDelayMs());
+        return;
+      }
       startNextKyoku();
     }
-  }, getPostAgariAutoAdvanceDelayMs());
+  }, nextDelayMs);
 }
 
 function installRyukyokuOverlayStagePatch(){
