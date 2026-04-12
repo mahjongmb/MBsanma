@@ -394,6 +394,172 @@ function movePostAgariFlowFromTableToResult(){
   schedulePlayerAiPostAgariAdvance("result");
 }
 
+function getSeatTilesForSettlementLog(seatIndex){
+  if (seatIndex === 0){
+    const out = Array.isArray(hand13) ? hand13.slice() : [];
+    if (drawn && drawn.code) out.push(drawn);
+    return out;
+  }
+
+  if (seatIndex === 1 || seatIndex === 2){
+    const baseHand = seatIndex === 1
+      ? (Array.isArray(cpuRightHand13) ? cpuRightHand13.slice() : [])
+      : (Array.isArray(cpuLeftHand13) ? cpuLeftHand13.slice() : []);
+
+    try{
+      if (typeof getCpuDrawnTileBySeat === "function"){
+        const extra = getCpuDrawnTileBySeat(seatIndex);
+        if (extra && extra.code) baseHand.push(extra);
+      }
+    }catch(e){}
+
+    return baseHand;
+  }
+
+  return [];
+}
+
+function getSeatFixedMeldCountForSettlementLog(seatIndex){
+  if (seatIndex === 0){
+    return Array.isArray(melds) ? melds.length : 0;
+  }
+
+  try{
+    if (typeof getCpuFixedMeldCountBySeat === "function"){
+      const count = Number(getCpuFixedMeldCountBySeat(seatIndex));
+      if (Number.isFinite(count) && count >= 0) return count;
+    }
+  }catch(e){}
+
+  if (seatIndex === 1){
+    return (typeof cpuRightMelds !== "undefined" && Array.isArray(cpuRightMelds)) ? cpuRightMelds.length : 0;
+  }
+  if (seatIndex === 2){
+    return (typeof cpuLeftMelds !== "undefined" && Array.isArray(cpuLeftMelds)) ? cpuLeftMelds.length : 0;
+  }
+
+  return 0;
+}
+
+function getExpectedConcealedTileCountForSettlementLog(fixedMeldCount){
+  const n = 13 - ((Number(fixedMeldCount) || 0) * 3);
+  return Math.max(0, n | 0);
+}
+
+function isTenpaiWithTilesForSettlementLog(tiles, fixedMeldCount){
+  try{
+    if (typeof countsFromTiles !== "function" || typeof calcShanten !== "function") return false;
+    const counts = countsFromTiles(Array.isArray(tiles) ? tiles : []);
+    return calcShanten(counts, fixedMeldCount) === 0;
+  }catch(e){
+    return false;
+  }
+}
+
+function isSeatTenpaiForSettlementLog(seatIndex){
+  const tiles = getSeatTilesForSettlementLog(seatIndex);
+  const fixedMeldCount = getSeatFixedMeldCountForSettlementLog(seatIndex);
+  const expectedConcealedCount = getExpectedConcealedTileCountForSettlementLog(fixedMeldCount);
+  const expectedWithDrawCount = expectedConcealedCount + 1;
+
+  if (tiles.length === expectedConcealedCount){
+    return isTenpaiWithTilesForSettlementLog(tiles, fixedMeldCount);
+  }
+
+  if (tiles.length === expectedWithDrawCount){
+    for (let i = 0; i < tiles.length; i++){
+      const candidate = tiles.slice();
+      candidate.splice(i, 1);
+      if (isTenpaiWithTilesForSettlementLog(candidate, fixedMeldCount)) return true;
+    }
+    return false;
+  }
+
+  return false;
+}
+
+function buildTenpaiSeatIndexesForSettlementLog(){
+  const out = [];
+  for (let seatIndex = 0; seatIndex < 3; seatIndex++){
+    if (isSeatTenpaiForSettlementLog(seatIndex)) out.push(seatIndex);
+  }
+  return out;
+}
+
+function readSeatRiichiStateForSettlementLog(seatIndex){
+  if (seatIndex === 0) return !!isRiichi;
+
+  const getterNames = [
+    "getRiichiStateBySeat",
+    "getSeatRiichiState",
+    "isSeatRiichi",
+    "isRiichiSeat",
+    "getCpuRiichiStateBySeat",
+    "isCpuRiichiSeat"
+  ];
+
+  for (const name of getterNames){
+    try{
+      const fn = (typeof window !== "undefined" && typeof window[name] === "function") ? window[name] : null;
+      if (!fn) continue;
+      return !!fn(seatIndex);
+    }catch(e){}
+  }
+
+  try{
+    if (seatIndex === 1){
+      if (typeof cpuRightRiichi !== "undefined") return !!cpuRightRiichi;
+      if (typeof isCpuRightRiichi !== "undefined") return !!isCpuRightRiichi;
+      if (typeof cpuRightIsRiichi !== "undefined") return !!cpuRightIsRiichi;
+    }
+    if (seatIndex === 2){
+      if (typeof cpuLeftRiichi !== "undefined") return !!cpuLeftRiichi;
+      if (typeof isCpuLeftRiichi !== "undefined") return !!isCpuLeftRiichi;
+      if (typeof cpuLeftIsRiichi !== "undefined") return !!cpuLeftIsRiichi;
+    }
+  }catch(e){}
+
+  return false;
+}
+
+function buildRiichiSeatIndexesForSettlementLog(){
+  const out = [];
+  for (let seatIndex = 0; seatIndex < 3; seatIndex++){
+    if (readSeatRiichiStateForSettlementLog(seatIndex)) out.push(seatIndex);
+  }
+  return out;
+}
+
+function prepareSettlementForLog(settlement){
+  if (!settlement || typeof settlement !== "object") return settlement;
+
+  try{
+    const out = { ...settlement };
+
+    if (out.type === "agari"){
+      out.tenpaiSeats = buildTenpaiSeatIndexesForSettlementLog();
+    } else if (!Array.isArray(out.tenpaiSeats) || out.tenpaiSeats.length <= 0){
+      const computedTenpaiSeats = buildTenpaiSeatIndexesForSettlementLog();
+      if (computedTenpaiSeats.length > 0) out.tenpaiSeats = computedTenpaiSeats;
+    }
+
+    if (!Array.isArray(out.riichiSeats) || out.riichiSeats.length <= 0){
+      const computedRiichiSeats = buildRiichiSeatIndexesForSettlementLog();
+      if (computedRiichiSeats.length > 0) out.riichiSeats = computedRiichiSeats;
+    }
+
+    return out;
+  }catch(e){
+    return settlement;
+  }
+}
+
+try{
+  if (typeof window !== "undefined"){
+    window.mbSanmaPrepareSettlementForLog = prepareSettlementForLog;
+  }
+}catch(e){}
+
 function movePostAgariFlowFromResultToNext(){
   if (hasAgariResultQueueNow()){
     try{
