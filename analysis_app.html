@@ -623,10 +623,11 @@
       const LEGACY_ACTIVE_SESSION_STORAGE_KEY = "mbsanma_visitor_active_session_v1";
       const CURRENT_LOGIN_ACCOUNT_STORAGE_KEY = "mbsanma_app_current_login_account_v1";
 
-      const TAB_KEYS = ["overview", "agari", "loss", "flow", "yaku"];
+      const TAB_KEYS = ["overview", "agari", "riichi", "loss", "flow", "yaku"];
       const TAB_LABELS = {
         overview: "全体",
         agari: "和了",
+        riichi: "リーチ",
         loss: "放銃 / 被ツモ",
         flow: "流局 / 進行",
         yaku: "役"
@@ -994,6 +995,24 @@
             ]
           ),
           createTabPanel(
+            "riichi",
+            "リーチ",
+            "リーチした局だけに絞って、和了しやすさ・打点・待ちの広さを確認するタブです。両面以上と愚形の差もここで見られます。",
+            [
+              createMetricCard("リーチ時和了率", formatRate(summary.agari.riichiAgariRate), "リーチした局基準"),
+              createMetricCard("リーチ時平均打点", formatAvgPoint(summary.riichi.averagePoint), "リーチ和了の純粋な打点"),
+              createMetricCard("平均リーチ巡目", formatAvgJunme(summary.riichi.averageJunme), "リーチ局のみ"),
+              createMetricCard("リーチ時平均待ち種類数", formatAvgCount(summary.riichi.averageWaitTypeCount, "種"), "待ち形データがあるリーチのみ"),
+              createMetricCard("リーチ時平均待ち枚数", formatAvgCount(summary.riichi.averageWaitTileCount, "枚"), "リーチ局のみ"),
+              createMetricCard("両面以上リーチ率", formatRate(summary.riichi.ryanmenRate), "両面・三面張・マルチ両面を含む"),
+              createMetricCard("両面以上リーチ和了率", formatRate(summary.riichi.ryanmenAgariRate), "両面以上でリーチした局基準"),
+              createMetricCard("両面以上リーチツモ和了率", formatRate(summary.riichi.ryanmenTsumoAgariRate), "両面以上でリーチした局基準"),
+              createMetricCard("愚形リーチ率", formatRate(summary.riichi.gukeiRate), "カンちゃん・単騎・しゃぼ・ペンちゃん"),
+              createMetricCard("愚形リーチ和了率", formatRate(summary.riichi.gukeiAgariRate), "愚形でリーチした局基準"),
+              createMetricCard("愚形リーチツモ和了率", formatRate(summary.riichi.gukeiTsumoAgariRate), "愚形でリーチした局基準")
+            ]
+          ),
+          createTabPanel(
             "loss",
             "放銃 / 被ツモ",
             "失点の傾向を見るタブです。どんな相手に放銃しやすいか、被ツモした手の平均打点がどれくらいかを確認できます。",
@@ -1011,14 +1030,10 @@
           createTabPanel(
             "flow",
             "流局 / 進行",
-            "局の進み方を見るタブです。リーチの早さや待ちの広さ、流局の多さなどをここで確認できます。",
+            "局全体の進み方を見るタブです。流局の多さや半荘の進行ペースなど、全体の流れをここで確認できます。",
             [
               createMetricCard("流局率", formatRate(summary.ryukyoku.rate), "全局基準"),
               createMetricCard("流局時聴牌率", formatRate(summary.ryukyoku.tenpaiRate), "流局局基準"),
-              createMetricCard("平均リーチ巡目", formatAvgJunme(summary.riichi.averageJunme), "リーチ局のみ"),
-              createMetricCard("リーチ時平均待ち種類数", formatAvgCount(summary.riichi.averageWaitTypeCount, "種"), "待ち形データがあるリーチのみ"),
-              createMetricCard("リーチ時平均待ち枚数", formatAvgCount(summary.riichi.averageWaitTileCount, "枚"), "リーチ局のみ"),
-              createMetricCard("両面以上リーチ率", formatRate(summary.riichi.ryanmenRate), "両面・三面張・マルチ両面を含む"),
               createMetricCard("半荘あたりリーチ出現率", formatAvgCount(summary.riichi.averageCountPerMatch, "回"), "対象半荘あたり"),
               createMetricCard("1半荘あたり平均局数", formatAvgCount(summary.overall.averageKyokuCountPerMatch, "局"), "対象半荘ベース"),
               createMetricCard("一局あたり平均巡目数", formatAvgJunme(summary.overall.averageJunmePerKyoku), "各局の到達巡目ベース"),
