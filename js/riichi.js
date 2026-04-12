@@ -1,5 +1,17 @@
 // ========= riichi.js（リーチ：選択→成立→自動ツモ切り＋例外停止） =========
 
+let riichiEffectHideTimer = null;
+
+function getRiichiEffectDurationMs(){
+  try{
+    if (typeof getGameSpeedMs === "function"){
+      const ms = Number(getGameSpeedMs("riichiEffectDurationMs", 900));
+      if (Number.isFinite(ms) && ms >= 0) return ms;
+    }
+  }catch(e){}
+  return 900;
+}
+
 function openRiichiEffect(seatIndex = 0){
   if (!riichiOverlay) return;
 
@@ -47,6 +59,23 @@ function openRiichiEffect(seatIndex = 0){
     w = "300px";
   }
 
+  const durationMs = getRiichiEffectDurationMs();
+
+  try{
+    if (riichiEffectHideTimer){
+      clearTimeout(riichiEffectHideTimer);
+      riichiEffectHideTimer = null;
+    }
+  }catch(e){}
+
+  try{
+    if (inner && typeof inner.getAnimations === "function"){
+      inner.getAnimations().forEach((anim)=>{
+        try{ anim.cancel(); }catch(e){}
+      });
+    }
+  }catch(e){}
+
   if (inner){
     inner.style.left = x;
     inner.style.top = y;
@@ -64,17 +93,18 @@ function openRiichiEffect(seatIndex = 0){
         { opacity: 0, transform: "translate(-50%, -50%) scale(1.12)" }
       ],
       {
-        duration: 900,
+        duration: durationMs,
         easing: "ease-out",
         fill: "forwards"
       }
     );
   }
 
-  setTimeout(()=>{
+  riichiEffectHideTimer = setTimeout(()=>{
+    riichiEffectHideTimer = null;
     if (!riichiOverlay) return;
     riichiOverlay.style.display = "none";
-  }, 900);
+  }, durationMs);
 }
 
 function stopRiichiAuto(){
