@@ -1034,6 +1034,7 @@
             [
               createMetricCard("流局率", formatRate(summary.ryukyoku.rate), "全局基準"),
               createMetricCard("流局時聴牌率", formatRate(summary.ryukyoku.tenpaiRate), "流局局基準"),
+              createMetricCard("平均リーチ巡目", formatAvgJunme(summary.riichi.averageJunme), "リーチ局のみ"),
               createMetricCard("半荘あたりリーチ出現率", formatAvgCount(summary.riichi.averageCountPerMatch, "回"), "対象半荘あたり"),
               createMetricCard("1半荘あたり平均局数", formatAvgCount(summary.overall.averageKyokuCountPerMatch, "局"), "対象半荘ベース"),
               createMetricCard("一局あたり平均巡目数", formatAvgJunme(summary.overall.averageJunmePerKyoku), "各局の到達巡目ベース"),
