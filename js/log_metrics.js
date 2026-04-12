@@ -204,10 +204,50 @@
     return false;
   }
 
+  function isGukeiWaitTypeKey(key){
+    const value = String(key || "").trim().toLowerCase();
+    if (!value) return false;
+    if (value === "kanchan") return true;
+    if (value === "penchan") return true;
+    if (value === "shanpon") return true;
+    if (value === "tanki") return true;
+    if (value.includes("kanchan")) return true;
+    if (value.includes("closed_wait")) return true;
+    if (value.includes("closed-wait")) return true;
+    if (value.includes("edge_wait")) return true;
+    if (value.includes("edge-wait")) return true;
+    if (value.includes("pair_wait")) return true;
+    if (value.includes("pair-wait")) return true;
+    if (value.includes("single_wait")) return true;
+    if (value.includes("single-wait")) return true;
+    if (value.includes("middle_wait")) return true;
+    if (value.includes("middle-wait")) return true;
+    if (value.includes("嵌張")) return true;
+    if (value.includes("カンチャン")) return true;
+    if (value.includes("カンちゃん")) return true;
+    if (value.includes("辺張")) return true;
+    if (value.includes("ペンチャン")) return true;
+    if (value.includes("ペンちゃん")) return true;
+    if (value.includes("双碰")) return true;
+    if (value.includes("シャンポン")) return true;
+    if (value.includes("しゃぼ")) return true;
+    if (value.includes("単騎")) return true;
+    if (value.includes("タンキ")) return true;
+    return false;
+  }
+
   function hasRyanmenOrBetterWait(tenpai, waitTypeKeys){
     const src = tenpai && typeof tenpai === "object" ? tenpai : {};
     if (src.isRyanmenWait === true) return true;
     return normalizeWaitTypeKeys(waitTypeKeys).some(isRyanmenLikeWaitTypeKey);
+  }
+
+  function hasGukeiWait(tenpai, waitTypeKeys){
+    const src = tenpai && typeof tenpai === "object" ? tenpai : {};
+    if (src.isRyanmenWait === true) return false;
+    const keys = normalizeWaitTypeKeys(waitTypeKeys);
+    if (!keys.length) return false;
+    return keys.some(isGukeiWaitTypeKey);
   }
 
   function getRiichiInfoBySeat(kyoku, seatIndex){
@@ -227,6 +267,7 @@
       waitTypeCount,
       waitTypeKeys,
       isRyanmenWait: hasRyanmenOrBetterWait(tenpai, waitTypeKeys),
+      isGukeiWait: hasGukeiWait(tenpai, waitTypeKeys),
       hasKnownWaitShape
     };
   }
@@ -1111,7 +1152,9 @@
     if (earlierOther) return "";
     const info = getRiichiInfoBySeat(kyoku, seatIndex);
     if (!info.hasKnownWaitShape) return "";
-    return info.isRyanmenWait ? "first_ryanmen_riichi" : "first_gukei_riichi";
+    if (info.isRyanmenWait) return "first_ryanmen_riichi";
+    if (info.isGukeiWait) return "first_gukei_riichi";
+    return "";
   }
 
   function buildOutcomeBucket(){
@@ -1325,11 +1368,22 @@
         count: 0,
         rate: null,
         averageJunme: null,
+        averagePoint: null,
         averageWaitTypeCount: null,
         averageWaitTileCount: null,
         waitShapeKnownCount: 0,
         ryanmenCount: 0,
         ryanmenRate: null,
+        ryanmenAgariCount: 0,
+        ryanmenTsumoAgariCount: 0,
+        ryanmenAgariRate: null,
+        ryanmenTsumoAgariRate: null,
+        gukeiCount: 0,
+        gukeiRate: null,
+        gukeiAgariCount: 0,
+        gukeiTsumoAgariCount: 0,
+        gukeiAgariRate: null,
+        gukeiTsumoAgariRate: null,
         averageCountPerMatch: null
       },
       open: {
@@ -1520,6 +1574,7 @@
             }
             if (riichiInfo.waitTileCount > 0) riichiWaitTileCounts.push(riichiInfo.waitTileCount);
             if (riichiInfo.hasKnownWaitShape && riichiInfo.isRyanmenWait) summary.riichi.ryanmenCount += 1;
+            if (riichiInfo.hasKnownWaitShape && riichiInfo.isGukeiWait) summary.riichi.gukeiCount += 1;
           }
 
           if (hasOpen){
@@ -1539,6 +1594,14 @@
               if (isDealer) summary.agari.dealerCount += 1;
               if (riichiInfo.hasRiichi) summary.agari.riichiCount += 1;
               if (hasOpen) summary.agari.openCount += 1;
+              if (riichiInfo.hasRiichi && riichiInfo.hasKnownWaitShape && riichiInfo.isRyanmenWait){
+                summary.riichi.ryanmenAgariCount += 1;
+                if (winType === "tsumo") summary.riichi.ryanmenTsumoAgariCount += 1;
+              }
+              if (riichiInfo.hasRiichi && riichiInfo.hasKnownWaitShape && riichiInfo.isGukeiWait){
+                summary.riichi.gukeiAgariCount += 1;
+                if (winType === "tsumo") summary.riichi.gukeiTsumoAgariCount += 1;
+              }
 
               const detailSource = entry || settlement;
               const isDamaAgari = isDamaAgariByContext(detailSource, riichiInfo, hasOpen);
@@ -1632,9 +1695,15 @@
     const sampleKyokuCount = summary.overall.sampleKyokuCount;
     summary.riichi.rate = rate(summary.riichi.count, sampleKyokuCount);
     summary.riichi.averageJunme = averageFrom(riichiJunmes);
+    summary.riichi.averagePoint = averageFrom(agariPointRiichiList);
     summary.riichi.averageWaitTypeCount = averageFrom(riichiWaitTypeCounts);
     summary.riichi.averageWaitTileCount = averageFrom(riichiWaitTileCounts);
     summary.riichi.ryanmenRate = rate(summary.riichi.ryanmenCount, summary.riichi.waitShapeKnownCount);
+    summary.riichi.ryanmenAgariRate = rate(summary.riichi.ryanmenAgariCount, summary.riichi.ryanmenCount);
+    summary.riichi.ryanmenTsumoAgariRate = rate(summary.riichi.ryanmenTsumoAgariCount, summary.riichi.ryanmenCount);
+    summary.riichi.gukeiRate = rate(summary.riichi.gukeiCount, summary.riichi.waitShapeKnownCount);
+    summary.riichi.gukeiAgariRate = rate(summary.riichi.gukeiAgariCount, summary.riichi.gukeiCount);
+    summary.riichi.gukeiTsumoAgariRate = rate(summary.riichi.gukeiTsumoAgariCount, summary.riichi.gukeiCount);
     summary.riichi.averageCountPerMatch = summary.scope.includedMatchCount > 0 ? (summary.riichi.count / summary.scope.includedMatchCount) : null;
 
     summary.open.rate = rate(summary.open.count, sampleKyokuCount);
