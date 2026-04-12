@@ -78,28 +78,162 @@ function getCpuRiichiWaitCodesForLog(concealedTiles, fixedMeldCount){
   return out;
 }
 
-function isCpuRiichiRyanmenWaitForLog(concealedTiles, fixedMeldCount, waitCodes){
+function getCpuPatternPairCodeForLog(pattern){
+  const src = pattern && typeof pattern === "object" ? pattern : null;
+  if (!src) return null;
+
+  const candidates = [src.pair, src.pairCode, src.head, src.janto, src.toitsu, src.eyes];
+  for (const candidate of candidates){
+    if (!candidate) continue;
+    if (typeof candidate === "string") return candidate;
+    if (candidate && typeof candidate === "object"){
+      if (typeof candidate.code === "string") return candidate.code;
+      if (Array.isArray(candidate.tiles) && candidate.tiles.length > 0){
+        const tile0 = candidate.tiles[0];
+        if (typeof tile0 === "string") return tile0;
+        if (tile0 && typeof tile0.code === "string") return tile0.code;
+      }
+    }
+    if (Array.isArray(candidate) && candidate.length > 0){
+      const tile0 = candidate[0];
+      if (typeof tile0 === "string") return tile0;
+      if (tile0 && typeof tile0.code === "string") return tile0.code;
+    }
+  }
+
+  return null;
+}
+
+function isCpuTripletMeldTypeForLog(type){
+  const value = String(type || "").toLowerCase();
+  return value === "koutsu" || value === "anko" || value === "pon" || value === "triplet";
+}
+
+function getCpuShuntsuSubtypeForLog(meldCode, waitCode){
+  const meld = String(meldCode || "");
+  const wait = String(waitCode || "");
+  if (meld.length < 2 || wait.length < 2) return "";
+
+  const suit = meld.slice(-1);
+  const start = Number(meld.slice(0, -1));
+  const waitNum = Number(wait.slice(0, -1));
+  if (!Number.isInteger(start) || !Number.isInteger(waitNum)) return "";
+  if (wait.slice(-1) !== suit) return "";
+
+  if (waitNum === start + 1) return "kanchan";
+
+  if (waitNum === start){
+    if (start === 7) return "penchan";
+    if (start >= 2 && start <= 6) return "ryanmen";
+  }
+
+  if (waitNum === start + 2){
+    if (start === 1) return "penchan";
+    if (start >= 2 && start <= 6) return "ryanmen";
+  }
+
+  return "";
+}
+
+function getCpuWaitTypeKeysForSingleWaitCodeFromPatternsForLog(concealedTiles, waitCode){
+  const out = new Set();
+  if (!waitCode) return out;
+  if (typeof countsFromTiles !== "function") return out;
+  if (typeof findStandardAgariPatternsFromCounts !== "function") return out;
+
+  try{
+    const tiles14 = Array.isArray(concealedTiles) ? concealedTiles.slice() : [];
+    tiles14.push({ code: waitCode });
+    const patterns = findStandardAgariPatternsFromCounts(countsFromTiles(tiles14));
+
+    for (const pattern of (Array.isArray(patterns) ? patterns : [])){
+      const pairCode = getCpuPatternPairCodeForLog(pattern);
+      if (pairCode === waitCode) out.add("tanki");
+
+      const meldsInPattern = Array.isArray(pattern && pattern.melds) ? pattern.melds : [];
+      for (const meld of meldsInPattern){
+        if (!meld || !meld.code) continue;
+
+        if (isCpuTripletMeldTypeForLog(meld.type) && meld.code === waitCode){
+          out.add("shabo");
+          continue;
+        }
+
+        if (meld.type !== "shuntsu") continue;
+        const subtype = getCpuShuntsuSubtypeForLog(meld.code, waitCode);
+        if (subtype) out.add(subtype);
+      }
+    }
+  }catch(e){}
+
+  return out;
+}
+
+function getCpuRyanmenCapableWaitCodesForLog(concealedTiles, fixedMeldCount, waitCodes){
   const waits = Array.isArray(waitCodes) ? waitCodes : [];
-  if (!waits.length) return false;
-  if (typeof countsFromTiles !== "function") return false;
-  if (typeof findStandardAgariPatternsFromCounts !== "function") return false;
-  if (typeof isRyanmenWaitForPinfu !== "function") return false;
+  if (!waits.length) return [];
+
+  const out = [];
+  const seen = new Set();
 
   for (const waitCode of waits){
-    try{
-      const tiles14 = Array.isArray(concealedTiles) ? concealedTiles.slice() : [];
-      tiles14.push({ code: waitCode });
-      const patterns = findStandardAgariPatternsFromCounts(countsFromTiles(tiles14));
-      for (const pattern of (Array.isArray(patterns) ? patterns : [])){
-        const meldsInPattern = Array.isArray(pattern && pattern.melds) ? pattern.melds : [];
-        for (const meld of meldsInPattern){
-          if (!meld || meld.type !== "shuntsu" || !meld.code) continue;
-          if (isRyanmenWaitForPinfu(meld.code, waitCode)) return true;
-        }
-      }
-    }catch(e){}
+    if (!waitCode || seen.has(waitCode)) continue;
+    const keys = getCpuWaitTypeKeysForSingleWaitCodeFromPatternsForLog(concealedTiles, waitCode);
+    if (keys.has("ryanmen")){
+      seen.add(waitCode);
+      out.push(waitCode);
+    }
   }
-  return false;
+
+  return out;
+}
+
+function classifyCpuWaitTypeKeysForLog(concealedTiles, fixedMeldCount, waitCodes){
+  const waits = Array.isArray(waitCodes) ? waitCodes.filter(Boolean) : [];
+  if (!waits.length) return [];
+
+  const detailKeys = new Set();
+  const ryanmenWaitCodes = [];
+  const seenRyanmenCodes = new Set();
+
+  for (const waitCode of waits){
+    const keys = getCpuWaitTypeKeysForSingleWaitCodeFromPatternsForLog(concealedTiles, waitCode);
+    keys.forEach((key)=> detailKeys.add(key));
+    if (keys.has("ryanmen") && !seenRyanmenCodes.has(waitCode)){
+      seenRyanmenCodes.add(waitCode);
+      ryanmenWaitCodes.push(waitCode);
+    }
+  }
+
+  const ryanmenCount = ryanmenWaitCodes.length;
+  const totalCount = waits.length;
+  const hasNonRyanmenDetail = ["tanki", "shabo", "kanchan", "penchan"].some((key)=> detailKeys.has(key));
+
+  const out = [];
+  if (ryanmenCount >= 2){
+    if (!hasNonRyanmenDetail && totalCount === 2 && ryanmenCount === 2){
+      out.push("ryanmen");
+    } else if (!hasNonRyanmenDetail && totalCount === 3 && ryanmenCount === 3){
+      out.push("sanmenchan");
+    } else {
+      out.push("multi_ryanmen");
+    }
+  }
+
+  ["tanki", "shabo", "kanchan", "penchan"].forEach((key)=> {
+    if (detailKeys.has(key)) out.push(key);
+  });
+
+  if (!out.length){
+    out.push("other");
+  }
+
+  return out;
+}
+
+function isCpuRiichiRyanmenWaitForLog(concealedTiles, fixedMeldCount, waitCodes){
+  const keys = classifyCpuWaitTypeKeysForLog(concealedTiles, fixedMeldCount, waitCodes);
+  return keys.includes("ryanmen") || keys.includes("sanmenchan") || keys.includes("multi_ryanmen");
 }
 
 function buildCpuRiichiTenpaiDetailForLog(seatIndex, concealedTiles, fixedMeldCount){
@@ -122,8 +256,8 @@ function buildCpuRiichiTenpaiDetailForLog(seatIndex, concealedTiles, fixedMeldCo
     waitTileCount = waitCodes.length;
   }
 
-  const isRyanmenWait = isCpuRiichiRyanmenWaitForLog(tiles13, fixedMeldCount, waitCodes);
-  const waitTypeKeys = waitCodes.length > 0 ? [isRyanmenWait ? "ryanmen" : "other"] : [];
+  const waitTypeKeys = classifyCpuWaitTypeKeysForLog(tiles13, fixedMeldCount, waitCodes);
+  const isRyanmenWait = waitTypeKeys.includes("ryanmen") || waitTypeKeys.includes("sanmenchan") || waitTypeKeys.includes("multi_ryanmen");
 
   return {
     waitTileCount,
