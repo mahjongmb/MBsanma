@@ -1000,11 +1000,11 @@
             "失点の傾向を見るタブです。どんな相手に放銃しやすいか、被ツモした手の平均打点がどれくらいかを確認できます。",
             [
               createMetricCard("放銃率", formatRate(summary.hoju.rate), "全局基準"),
-              createMetricCard("親への放銃割合", formatRate(summary.hoju.dealerWinnerRate), "放銃局基準"),
+              createMetricCard("放銃中親への放銃割合", formatRate(summary.hoju.dealerWinnerRate), "放銃局基準"),
               createMetricCard("リーチへの放銃率", formatRate(summary.hoju.riichiRate), "放銃局基準"),
               createMetricCard("副露への放銃率", formatRate(summary.hoju.openRate), "放銃局基準"),
               createMetricCard("放銃時平均失点", formatAvgPoint(summary.hoju.averagePoint), "放銃した相手手の純粋な打点"),
-              createMetricCard("放銃時聴牌率", formatRate(summary.hoju.tenpaiRate), "記録が残っている分のみ"),
+              createMetricCard("放銃時テンパイ率", formatRate(summary.hoju.tenpaiRate), "記録が残っている分のみ"),
               createMetricCard("被ツモ率", formatRate(summary.hitByTsumo.rate), "全局基準"),
               createMetricCard("被ツモ時平均失点", formatAvgPoint(summary.hitByTsumo.averagePoint), "被ツモ時の実支払い平均")
             ]
