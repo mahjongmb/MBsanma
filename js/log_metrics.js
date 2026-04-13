@@ -211,8 +211,10 @@
     if (value === "kanchan") return true;
     if (value === "penchan") return true;
     if (value === "shanpon") return true;
+    if (value === "shabo") return true;
     if (value === "tanki") return true;
     if (value.includes("kanchan")) return true;
+    if (value.includes("shabo")) return true;
     if (value.includes("closed_wait")) return true;
     if (value.includes("closed-wait")) return true;
     if (value.includes("edge_wait")) return true;
