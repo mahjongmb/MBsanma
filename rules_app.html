@@ -1,0 +1,1588 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ルール変更</title>
+  <style>
+    :root{
+      --bg-top:#103126;
+      --bg-bottom:#08120e;
+      --panel-bg:rgba(8,20,15,0.84);
+      --panel-border:rgba(255,255,255,0.12);
+      --panel-soft:rgba(255,255,255,0.04);
+      --panel-soft-2:rgba(255,255,255,0.06);
+      --text:#f6f7f3;
+      --muted:rgba(246,247,243,0.76);
+      --muted-2:rgba(246,247,243,0.56);
+      --gold-1:#f2d58f;
+      --gold-2:#d9bb72;
+      --gold-text:#1e1402;
+      --accent:#8fdcc1;
+      --accent-2:#2f8f74;
+      --danger:#e6a6a6;
+      --shadow:0 18px 50px rgba(0,0,0,0.28);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --content-w:1120px;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html,body{
+      margin:0;
+      min-height:100%;
+    }
+
+    body{
+      min-height:100vh;
+      background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bottom) 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      padding:24px;
+    }
+
+    button,
+    input{
+      font:inherit;
+    }
+
+    .page{
+      width:min(100%,var(--content-w));
+      margin:0 auto;
+      display:grid;
+      gap:18px;
+    }
+
+    .hero,
+    .tabsWrap{
+      padding:22px;
+      border-radius:var(--radius-xl);
+      background:var(--panel-bg);
+      border:1px solid var(--panel-border);
+      box-shadow:var(--shadow);
+    }
+
+    .hero{
+      display:grid;
+      gap:16px;
+    }
+
+    .heroTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .heroTitle{
+      display:grid;
+      gap:10px;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      width:max-content;
+      min-height:28px;
+      padding:0 12px;
+      border-radius:999px;
+      background:rgba(143,220,193,0.14);
+      border:1px solid rgba(143,220,193,0.22);
+      color:var(--accent);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:0.04em;
+    }
+
+    h1{
+      margin:0;
+      font-size:34px;
+      line-height:1.15;
+    }
+
+    .heroText{
+      margin:0;
+      max-width:780px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:15px;
+    }
+
+    .heroActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:0 18px;
+      border-radius:14px;
+      text-decoration:none;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid transparent;
+      transition:transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btnPrimary{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+    }
+
+    .btnGhost{
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
+      border-color:rgba(255,255,255,0.10);
+    }
+
+    .heroMeta{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .metaCard{
+      display:grid;
+      gap:8px;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .metaLabel{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted-2);
+      letter-spacing:0.04em;
+    }
+
+    .metaValue{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.5;
+    }
+
+    .metaText{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .tabsWrap{
+      display:grid;
+      gap:16px;
+    }
+
+    .topTabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .topTabBtn{
+      appearance:none;
+      border:none;
+      min-height:46px;
+      padding:0 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:0.01em;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease,color 0.15s ease;
+    }
+
+    .topTabBtn:hover,
+    .tabActionBtn:hover,
+    .switch:hover{
+      transform:translateY(-1px);
+    }
+
+    .topTabBtn[aria-selected="true"]{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+      border-color:transparent;
+    }
+
+    .panelToolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .panelToolbarText{
+      display:grid;
+      gap:6px;
+    }
+
+    .panelToolbarTitle{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.35;
+    }
+
+    .panelToolbarLead{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .toolbarActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .tabActionBtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
+      min-height:40px;
+      padding:0 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease;
+    }
+
+    .mainPanels,
+    .mainPanel{
+      display:grid;
+      gap:16px;
+    }
+
+    .mainPanel{
+      display:none;
+    }
+
+    .mainPanel.isActive{
+      display:grid;
+    }
+
+    .sectionCard{
+      display:grid;
+      gap:14px;
+      padding:20px;
+      border-radius:22px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .sectionHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .sectionTitleBox{
+      display:grid;
+      gap:6px;
+    }
+
+    .sectionTitle{
+      margin:0;
+      font-size:20px;
+      line-height:1.3;
+    }
+
+    .sectionLead{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:0.02em;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      white-space:nowrap;
+    }
+
+    .pillAccent{
+      color:var(--accent);
+      background:rgba(143,220,193,0.12);
+      border-color:rgba(143,220,193,0.18);
+    }
+
+    .settingList{
+      display:grid;
+      gap:12px;
+    }
+
+    .settingRow{
+      display:grid;
+      grid-template-columns:minmax(0,1.4fr) minmax(240px,0.8fr);
+      gap:14px;
+      align-items:center;
+      padding:16px;
+      border-radius:18px;
+      background:rgba(0,0,0,0.16);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .settingMeta{
+      display:grid;
+      gap:6px;
+      min-width:0;
+    }
+
+    .settingLabel{
+      font-size:15px;
+      font-weight:800;
+      line-height:1.4;
+    }
+
+    .settingDesc{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .settingControl{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .switchWrap{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .switchLabel{
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+      min-width:48px;
+      text-align:right;
+    }
+
+    .switch{
+      position:relative;
+      width:62px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.10);
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease;
+      flex:0 0 auto;
+    }
+
+    .switch::after{
+      content:"";
+      position:absolute;
+      top:3px;
+      left:3px;
+      width:26px;
+      height:26px;
+      border-radius:50%;
+      background:#ffffff;
+      box-shadow:0 4px 10px rgba(0,0,0,0.24);
+      transition:left 0.15s ease, background 0.15s ease;
+    }
+
+    .switch.isOn{
+      background:rgba(242,213,143,0.28);
+      border-color:rgba(242,213,143,0.24);
+    }
+
+    .switch.isOn::after{
+      left:31px;
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+    }
+
+    .numInputWrap{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      width:100%;
+      max-width:260px;
+      margin-left:auto;
+    }
+
+    .numInput{
+      width:100%;
+      min-width:0;
+      height:44px;
+      padding:0 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+      color:var(--text);
+      outline:none;
+    }
+
+    .numInput:focus{
+      border-color:rgba(143,220,193,0.34);
+      box-shadow:0 0 0 3px rgba(143,220,193,0.10);
+    }
+
+    .unit{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:52px;
+      height:44px;
+      padding:0 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .footerNote{
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      line-height:1.8;
+      font-size:13px;
+    }
+
+    @media (max-width: 900px){
+      .heroMeta,
+      .settingRow{
+        grid-template-columns:1fr;
+      }
+
+      .settingControl{
+        justify-content:flex-start;
+      }
+
+      .numInputWrap{
+        max-width:none;
+        margin-left:0;
+        justify-content:flex-start;
+      }
+    }
+
+    @media (max-width: 640px){
+      body{
+        padding:14px;
+      }
+
+      .hero,
+      .tabsWrap{
+        padding:16px;
+      }
+
+      h1{
+        font-size:28px;
+      }
+
+      .panelToolbarTitle{
+        font-size:20px;
+      }
+
+      .topTabBtn,
+      .tabActionBtn{
+        width:100%;
+        justify-content:center;
+      }
+
+      .settingRow,
+      .sectionCard{
+        padding:16px;
+      }
+
+      .numInputWrap{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="heroTop">
+        <div class="heroTitle">
+          <span class="eyebrow">SANMA LAB</span>
+          <h1>ルール変更</h1>
+          <p class="heroText">
+            タブごとに項目を縦並びで整理し、採用 / 不採用はスイッチ、点数まわりは入力欄で決めていく形に整理しました。
+            まずはルール変更ページの入力UI土台だけを先に作っています。
+          </p>
+        </div>
+
+        <div class="heroActions">
+          <a class="btn btnPrimary" href="index_app.html">トップへ戻る</a>
+          <button class="btn btnGhost" type="button" id="scrollActiveTabBtn">今のタブ先頭へ</button>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="tabsWrap">
+      <div class="topTabs" role="tablist" aria-label="ルール変更タブ">
+        <button class="topTabBtn" type="button" role="tab" aria-selected="true" aria-controls="panel-overview" id="tab-overview" data-tab="overview">概要</button>
+        <button class="topTabBtn" type="button" role="tab" aria-selected="false" aria-controls="panel-score" id="tab-score" data-tab="score">点数・精算</button>
+        <button class="topTabBtn" type="button" role="tab" aria-selected="false" aria-controls="panel-tiles" id="tab-tiles" data-tab="tiles">使用牌</button>
+        <button class="topTabBtn" type="button" role="tab" aria-selected="false" aria-controls="panel-basic" id="tab-basic" data-tab="basic">基本</button>
+        <button class="topTabBtn" type="button" role="tab" aria-selected="false" aria-controls="panel-extra" id="tab-extra" data-tab="extra">補足</button>
+        <button class="topTabBtn" type="button" role="tab" aria-selected="false" aria-controls="panel-yaku" id="tab-yaku" data-tab="yaku">採用役</button>
+      </div>
+
+      <div class="mainPanels">
+        <section class="mainPanel isActive" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">概要</div>
+              <div class="panelToolbarLead">対局全体の大枠を先に決めるためのタブです。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="overview">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">対局全体の前提</h2>
+                <p class="sectionLead">東風戦や半荘戦、西入、オーラス止めなどの全体条件です。</p>
+              </div>
+              <span class="pill pillAccent">全体</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">半荘戦を採用</div>
+                  <div class="settingDesc">現行の主軸ルールを半荘戦にする前提のスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="overview-hanchan">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="overview-hanchan" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">東風戦を採用</div>
+                  <div class="settingDesc">東風戦ベースに切り替えるためのスイッチ枠です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="overview-tonpuu">不採用</div>
+                    <button class="switch" type="button" role="switch" aria-checked="false" data-setting-type="bool" data-setting-key="overview-tonpuu" data-default="false"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">西入を採用</div>
+                  <div class="settingDesc">延長ルールとして西入を使う場合の枠です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="overview-shaa">不採用</div>
+                    <button class="switch" type="button" role="switch" aria-checked="false" data-setting-type="bool" data-setting-key="overview-shaa" data-default="false"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">オーラス止めを採用</div>
+                  <div class="settingDesc">トップ確定時などの終了条件として使う想定です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="overview-oorasu-stop">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="overview-oorasu-stop" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mainPanel" id="panel-score" role="tabpanel" aria-labelledby="tab-score">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">点数・精算</div>
+              <div class="panelToolbarLead">持ち点、返し、本場、供託、テンパイ料などの数値を入力するタブです。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="score">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">精算の基準点</h2>
+                <p class="sectionLead">配給原点、返し、オカ、ウマなどをここで固めます。</p>
+              </div>
+              <span class="pill">数値入力</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">配給原点</div>
+                  <div class="settingDesc">対局開始時の持ち点です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-haikyuu" data-default="35000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">原点</div>
+                  <div class="settingDesc">精算計算の基準になる点数です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-genten" data-default="35000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">返し点</div>
+                  <div class="settingDesc">最終精算時に使う返しです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-kaeshi" data-default="40000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">オカ</div>
+                  <div class="settingDesc">トップ取り分の加点です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" data-setting-type="number" data-setting-key="score-oka" data-default="15" />
+                    <span class="unit">pt</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">1着ウマ</div>
+                  <div class="settingDesc">1着に加算するウマです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" data-setting-type="number" data-setting-key="score-uma-1" data-default="10" />
+                    <span class="unit">pt</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">2着ウマ</div>
+                  <div class="settingDesc">2着に加算するウマです。マイナス値も入れられます。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" data-setting-type="number" data-setting-key="score-uma-2" data-default="-5" />
+                    <span class="unit">pt</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">局中の加算と終了条件</h2>
+                <p class="sectionLead">本場や供託、テンパイ料、飛び終了をここで設定します。</p>
+              </div>
+              <span class="pill">進行</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">リーチ棒</div>
+                  <div class="settingDesc">供託として場に出す点数です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-riichibou" data-default="1000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">本場 出和了加算</div>
+                  <div class="settingDesc">出和了時に加算する本場分です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-honba-ron" data-default="1000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">本場 ツモ各自加算</div>
+                  <div class="settingDesc">ツモ時に各自へ加算する本場分です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-honba-tsumo" data-default="1000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">テンパイ料</div>
+                  <div class="settingDesc">1人テンパイ時に各ノーテン者から支払う基準額です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="100" min="0" data-setting-type="number" data-setting-key="score-tenpai" data-default="1000" />
+                    <span class="unit">点</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">飛び終了を採用</div>
+                  <div class="settingDesc">誰かが0点未満になった時点で対局を終了するかの切り替えです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="score-tobi">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="score-tobi" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">箱下精算を採用</div>
+                  <div class="settingDesc">飛び後のマイナス分まで精算に反映するかのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="score-hakoshita">不採用</div>
+                    <button class="switch" type="button" role="switch" aria-checked="false" data-setting-type="bool" data-setting-key="score-hakoshita" data-default="false"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mainPanel" id="panel-tiles" role="tabpanel" aria-labelledby="tab-tiles">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">使用牌</div>
+              <div class="panelToolbarLead">牌構成、赤牌、抜きドラ、ドラ表示関連をまとめるタブです。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="tiles">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">牌構成</h2>
+                <p class="sectionLead">山枚数や王牌枚数、赤牌の有無を決めます。</p>
+              </div>
+              <span class="pill">牌</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">山枚数</div>
+                  <div class="settingDesc">現行想定では108枚です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" min="0" data-setting-type="number" data-setting-key="tiles-wall" data-default="108" />
+                    <span class="unit">枚</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">王牌枚数</div>
+                  <div class="settingDesc">ドラ表示牌や嶺上牌を含む固定領域の枚数です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" min="0" data-setting-type="number" data-setting-key="tiles-deadwall" data-default="14" />
+                    <span class="unit">枚</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">赤5pを採用</div>
+                  <div class="settingDesc">筒子の赤5を使うかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-aka-5p">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-aka-5p" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">赤5sを採用</div>
+                  <div class="settingDesc">索子の赤5を使うかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-aka-5s">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-aka-5s" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">抜きドラとドラまわり</h2>
+                <p class="sectionLead">北抜き、花牌、裏ドラ、槓ドラなどの採用有無です。</p>
+              </div>
+              <span class="pill">ドラ</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">北抜きを採用</div>
+                  <div class="settingDesc">北を抜きドラとして扱う前提です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-pei">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-pei" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">花牌を採用</div>
+                  <div class="settingDesc">北ではなく花牌に切り替える将来拡張用の枠です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-hanahai">不採用</div>
+                    <button class="switch" type="button" role="switch" aria-checked="false" data-setting-type="bool" data-setting-key="tiles-hanahai" data-default="false"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">抜きドラ補充を採用</div>
+                  <div class="settingDesc">北抜きや花牌抜きのあとに補充ツモを行うかのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-nuki-draw">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-nuki-draw" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">裏ドラを採用</div>
+                  <div class="settingDesc">リーチ和了時の裏ドラを有効にするかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-uradora">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-uradora" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">槓ドラを採用</div>
+                  <div class="settingDesc">カン成立時にドラを増やすかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-kandora">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-kandora" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">槓裏ドラを採用</div>
+                  <div class="settingDesc">リーチ中のカン後に槓裏を使うかのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="tiles-kanura">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="tiles-kanura" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mainPanel" id="panel-basic" role="tabpanel" aria-labelledby="tab-basic">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">基本</div>
+              <div class="panelToolbarLead">喰いタン、後付け、リーチ後行動、途中流局などの基本ルールです。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="basic">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">基本ルール</h2>
+                <p class="sectionLead">対局中に直接影響する標準ルールをここで切り替えます。</p>
+              </div>
+              <span class="pill">採用切替</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">喰いタンを採用</div>
+                  <div class="settingDesc">鳴きタンヤオを認めるかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-kuitan">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-kuitan" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">後付けを採用</div>
+                  <div class="settingDesc">後付けを認めるかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-atozuke">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-atozuke" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">一発を採用</div>
+                  <div class="settingDesc">リーチ後の一発を有効にするかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-ippatsu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-ippatsu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">ダブル立直を採用</div>
+                  <div class="settingDesc">ダブリーを認めるかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-double-riichi">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-double-riichi" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">ツモ損を採用</div>
+                  <div class="settingDesc">三麻特有のツモ損ありルールにする場合の切り替えです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-tsumoson">不採用</div>
+                    <button class="switch" type="button" role="switch" aria-checked="false" data-setting-type="bool" data-setting-key="basic-tsumoson" data-default="false"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">親テンパイ連荘を採用</div>
+                  <div class="settingDesc">流局時に親テンパイで連荘するかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-renchan-tenpai">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-renchan-tenpai" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">途中流局を採用</div>
+                  <div class="settingDesc">九種九牌や四風連打などを有効にするかのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-tochu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-tochu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">リーチ後暗槓を許可</div>
+                  <div class="settingDesc">リーチ後の暗槓可否を切り替える枠です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-riichi-ankan">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-riichi-ankan" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">リーチ後北抜きを許可</div>
+                  <div class="settingDesc">リーチ後に北抜きを認めるかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="basic-riichi-pei">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="basic-riichi-pei" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mainPanel" id="panel-extra" role="tabpanel" aria-labelledby="tab-extra">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">補足</div>
+              <div class="panelToolbarLead">符計算例外、流し満貫系、役満複合、祝儀などの追加条件です。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="extra">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">補足条件</h2>
+                <p class="sectionLead">通常ルールの外側にある細かな条件をまとめています。</p>
+              </div>
+              <span class="pill">追加条件</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">切り上げ満貫を採用</div>
+                  <div class="settingDesc">3翻30符などを満貫にするかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-kiriage">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-kiriage" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">七対子25符固定を採用</div>
+                  <div class="settingDesc">七対子を25符固定にする前提です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-chiitoi-fu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-chiitoi-fu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">平和ツモ20符を採用</div>
+                  <div class="settingDesc">平和ツモを20符で扱うかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-pinfu-tsumo">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-pinfu-tsumo" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">流し満貫系を採用</div>
+                  <div class="settingDesc">流し満貫または流し倍満を有効にするかの前提です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-nagashi-on">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-nagashi-on" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">流し倍満扱いを採用</div>
+                  <div class="settingDesc">採用時、流し満貫ではなく流し倍満として扱うためのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-nagashi-baiman">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-nagashi-baiman" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">役満複合を採用</div>
+                  <div class="settingDesc">ダブル役満以上を認めるかどうかです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-yakuman-stack">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-yakuman-stack" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">数え役満を採用</div>
+                  <div class="settingDesc">数え役満を役満扱いにするかのスイッチです。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-kazoe">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-kazoe" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">祝儀を採用</div>
+                  <div class="settingDesc">点数とは別に祝儀を扱うかの前提です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="extra-chip-on">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="extra-chip-on" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">祝儀枚数</div>
+                  <div class="settingDesc">1回の成立で動く祝儀枚数です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="numInputWrap">
+                    <input class="numInput" type="number" inputmode="numeric" step="1" min="0" data-setting-type="number" data-setting-key="extra-chip-count" data-default="1" />
+                    <span class="unit">枚</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="mainPanel" id="panel-yaku" role="tabpanel" aria-labelledby="tab-yaku">
+          <div class="panelToolbar">
+            <div class="panelToolbarText">
+              <div class="panelToolbarTitle">採用役</div>
+              <div class="panelToolbarLead">各役ごとに採用 / 不採用を切り替えるタブです。</div>
+            </div>
+            <div class="toolbarActions">
+              <button class="tabActionBtn" type="button" data-reset-panel="yaku">このタブを初期値に戻す</button>
+            </div>
+          </div>
+
+          <article class="sectionCard">
+            <div class="sectionHead">
+              <div class="sectionTitleBox">
+                <h2 class="sectionTitle">役の採用切替</h2>
+                <p class="sectionLead">まずは主要役だけを縦並びで置いています。あとから項目追加しやすい形です。</p>
+              </div>
+              <span class="pill">役</span>
+            </div>
+
+            <div class="settingList">
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">門前清自摸和を採用</div>
+                  <div class="settingDesc">面前ツモの採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-tsumo">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-tsumo" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">平和を採用</div>
+                  <div class="settingDesc">平和の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-pinfu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-pinfu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">一盃口を採用</div>
+                  <div class="settingDesc">一盃口の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-iipeikou">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-iipeikou" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">三色同順を採用</div>
+                  <div class="settingDesc">三色同順の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-sanshoku">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-sanshoku" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">一気通貫を採用</div>
+                  <div class="settingDesc">一通の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-ittsuu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-ittsuu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">混全帯么九を採用</div>
+                  <div class="settingDesc">チャンタの採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-chanta">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-chanta" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">純全帯么九を採用</div>
+                  <div class="settingDesc">ジュンチャンの採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-junchan">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-junchan" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">混一色を採用</div>
+                  <div class="settingDesc">ホンイツの採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-honitsu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-honitsu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">清一色を採用</div>
+                  <div class="settingDesc">チンイツの採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-chinitsu">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-chinitsu" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">国士無双を採用</div>
+                  <div class="settingDesc">国士無双の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-kokushi">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-kokushi" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settingRow">
+                <div class="settingMeta">
+                  <div class="settingLabel">四暗刻を採用</div>
+                  <div class="settingDesc">四暗刻の採用可否です。</div>
+                </div>
+                <div class="settingControl">
+                  <div class="switchWrap">
+                    <div class="switchLabel" data-label-for="yaku-suuankou">採用</div>
+                    <button class="switch isOn" type="button" role="switch" aria-checked="true" data-setting-type="bool" data-setting-key="yaku-suuankou" data-default="true"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <div class="footerNote">
+        今回の修正ファイルは <strong>rules_app.html</strong> のみです。UIはタブ1段構成に整理し、サブタブと「このページの使い方」ブロックは外しています。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var storageKey = "mbsanma_rules_ui_v2";
+      var state = loadState();
+      var topTabButtons = Array.prototype.slice.call(document.querySelectorAll(".topTabBtn"));
+      var mainPanels = Array.prototype.slice.call(document.querySelectorAll(".mainPanel"));
+      var scrollActiveTabBtn = document.getElementById("scrollActiveTabBtn");
+      var resetButtons = Array.prototype.slice.call(document.querySelectorAll("[data-reset-panel]"));
+      var boolControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="bool"]'));
+      var numberControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="number"]'));
+
+      function loadState() {
+        try {
+          var raw = sessionStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveState() {
+        try {
+          sessionStorage.setItem(storageKey, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      function activateMainTab(tabName) {
+        topTabButtons.forEach(function (button) {
+          var isActive = button.dataset.tab === tabName;
+          button.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+
+        mainPanels.forEach(function (panel) {
+          panel.classList.toggle("isActive", panel.id === "panel-" + tabName);
+        });
+
+        state.activeMainTab = tabName;
+        saveState();
+      }
+
+      function updateSwitchLabel(key, value) {
+        var label = document.querySelector('[data-label-for="' + key + '"]');
+        if (!label) return;
+        label.textContent = value ? "採用" : "不採用";
+      }
+
+      function setBoolValue(control, value) {
+        control.classList.toggle("isOn", value);
+        control.setAttribute("aria-checked", value ? "true" : "false");
+        state[control.dataset.settingKey] = !!value;
+        updateSwitchLabel(control.dataset.settingKey, !!value);
+        saveState();
+      }
+
+      function setNumberValue(control, value) {
+        control.value = value;
+        state[control.dataset.settingKey] = String(value);
+        saveState();
+      }
+
+      function resetPanel(panelKey) {
+        var panel = document.getElementById("panel-" + panelKey);
+        if (!panel) return;
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="bool"]')).forEach(function (control) {
+          var value = String(control.dataset.default) === "true";
+          setBoolValue(control, value);
+        });
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="number"]')).forEach(function (control) {
+          setNumberValue(control, control.dataset.default || "");
+        });
+      }
+
+      topTabButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          activateMainTab(button.dataset.tab);
+        });
+      });
+
+      boolControls.forEach(function (control) {
+        control.addEventListener("click", function () {
+          var current = control.getAttribute("aria-checked") === "true";
+          setBoolValue(control, !current);
+        });
+      });
+
+      numberControls.forEach(function (control) {
+        control.addEventListener("input", function () {
+          setNumberValue(control, control.value);
+        });
+      });
+
+      resetButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          resetPanel(button.dataset.resetPanel);
+        });
+      });
+
+      if (scrollActiveTabBtn) {
+        scrollActiveTabBtn.addEventListener("click", function () {
+          var activePanel = document.querySelector(".mainPanel.isActive");
+          if (!activePanel) return;
+          activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      boolControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = String(control.dataset.default) === "true";
+        var storedValue = typeof state[key] === "boolean" ? state[key] : defaultValue;
+        setBoolValue(control, storedValue);
+      });
+
+      numberControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = control.dataset.default || "";
+        var storedValue = typeof state[key] === "string" ? state[key] : defaultValue;
+        setNumberValue(control, storedValue);
+      });
+
+      activateMainTab(state.activeMainTab || "overview");
+    })();
+  </script>
+</body>
+</html>
