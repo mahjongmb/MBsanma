@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>ルール変更</title>
+<style>
+    :root{
+      --bg-top:#103126;
+      --bg-bottom:#08120e;
+      --panel-bg:rgba(8,20,15,0.84);
+      --panel-border:rgba(255,255,255,0.12);
+      --panel-soft:rgba(255,255,255,0.04);
+      --panel-soft-2:rgba(255,255,255,0.06);
+      --text:#f6f7f3;
+      --muted:rgba(246,247,243,0.76);
+      --muted-2:rgba(246,247,243,0.56);
+      --gold-1:#f2d58f;
+      --gold-2:#d9bb72;
+      --gold-text:#1e1402;
+      --accent:#8fdcc1;
+      --accent-2:#2f8f74;
+      --danger:#e6a6a6;
+      --shadow:0 18px 50px rgba(0,0,0,0.28);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --content-w:1120px;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html,body{
+      margin:0;
+      min-height:100%;
+    }
+
+    body{
+      min-height:100vh;
+      background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg-bottom) 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      padding:24px;
+    }
+
+    button,
+    input{
+      font:inherit;
+    }
+
+    .page{
+      width:min(100%,var(--content-w));
+      margin:0 auto;
+      display:grid;
+      gap:18px;
+    }
+
+    .hero,
+    .tabsWrap{
+      padding:22px;
+      border-radius:var(--radius-xl);
+      background:var(--panel-bg);
+      border:1px solid var(--panel-border);
+      box-shadow:var(--shadow);
+    }
+
+    .hero{
+      display:grid;
+      gap:16px;
+    }
+
+    .heroTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .heroTitle{
+      display:grid;
+      gap:10px;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      width:max-content;
+      min-height:28px;
+      padding:0 12px;
+      border-radius:999px;
+      background:rgba(143,220,193,0.14);
+      border:1px solid rgba(143,220,193,0.22);
+      color:var(--accent);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:0.04em;
+    }
+
+    h1{
+      margin:0;
+      font-size:34px;
+      line-height:1.15;
+    }
+
+    .heroText{
+      margin:0;
+      max-width:780px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:15px;
+    }
+
+    .heroActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:0 18px;
+      border-radius:14px;
+      text-decoration:none;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid transparent;
+      transition:transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btnPrimary{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+    }
+
+    .btnGhost{
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
+      border-color:rgba(255,255,255,0.10);
+    }
+
+    .heroMeta{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .metaCard{
+      display:grid;
+      gap:8px;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .metaLabel{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted-2);
+      letter-spacing:0.04em;
+    }
+
+    .metaValue{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.5;
+    }
+
+    .metaText{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .tabsWrap{
+      display:grid;
+      gap:16px;
+    }
+
+    .tabsHeaderRow{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .topTabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      flex:1 1 auto;
+    }
+
+    .tabResetWrap{
+      display:flex;
+      justify-content:flex-end;
+      margin-left:auto;
+      flex:0 0 auto;
+    }
+
+    .topTabBtn{
+      appearance:none;
+      border:none;
+      min-height:46px;
+      padding:0 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:0.01em;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease,color 0.15s ease;
+    }
+
+    .topTabBtn:hover,
+    .tabActionBtn:hover,
+    .switch:hover{
+      transform:translateY(-1px);
+    }
+
+    .topTabBtn[aria-selected="true"]{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+      border-color:transparent;
+    }
+
+    .panelToolbar{
+      display:none;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .panelToolbarText{
+      display:grid;
+      gap:6px;
+    }
+
+    .panelToolbarTitle{
+      font-size:22px;
+      font-weight:800;
+      line-height:1.35;
+    }
+
+    .panelToolbarLead{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .toolbarActions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .tabActionBtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      color:var(--text);
+      min-height:40px;
+      padding:0 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease;
+    }
+
+    .mainPanels,
+    .mainPanel{
+      display:grid;
+      gap:16px;
+    }
+
+    .mainPanel{
+      display:none;
+    }
+
+    .mainPanel.isActive{
+      display:grid;
+    }
+
+    .sectionCard{
+      display:grid;
+      gap:14px;
+      padding:20px;
+      border-radius:22px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .sectionHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .sectionTitleBox{
+      display:grid;
+      gap:6px;
+    }
+
+    .sectionTitle{
+      margin:0;
+      font-size:20px;
+      line-height:1.3;
+    }
+
+    .sectionLead{
+      display:none;
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:0.02em;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      white-space:nowrap;
+    }
+
+    .pillAccent{
+      color:var(--accent);
+      background:rgba(143,220,193,0.12);
+      border-color:rgba(143,220,193,0.18);
+    }
+
+    .settingList{
+      display:grid;
+      gap:12px;
+    }
+
+    .settingRow{
+      display:grid;
+      grid-template-columns:minmax(0,1.4fr) minmax(240px,0.8fr);
+      gap:14px;
+      align-items:center;
+      padding:16px;
+      border-radius:18px;
+      background:rgba(0,0,0,0.16);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .settingMeta{
+      display:grid;
+      gap:6px;
+      min-width:0;
+    }
+
+    .settingLabel{
+      font-size:15px;
+      font-weight:800;
+      line-height:1.4;
+    }
+
+    .settingDesc{
+      display:none;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    .settingControl{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .switchWrap{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .switchLabel{
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+      min-width:48px;
+      text-align:right;
+    }
+
+    .choiceToggleLabel{
+      min-width:64px;
+    }
+
+    .switch{
+      position:relative;
+      width:62px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.10);
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease;
+      flex:0 0 auto;
+    }
+
+    .switch::after{
+      content:"";
+      position:absolute;
+      top:3px;
+      left:3px;
+      width:26px;
+      height:26px;
+      border-radius:50%;
+      background:#ffffff;
+      box-shadow:0 4px 10px rgba(0,0,0,0.24);
+      transition:left 0.15s ease, background 0.15s ease;
+    }
+
+    .switch.isOn{
+      background:rgba(242,213,143,0.28);
+      border-color:rgba(242,213,143,0.24);
+    }
+
+    .switch.isOn::after{
+      left:31px;
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+    }
+
+    .numInputWrap{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      width:auto;
+      max-width:none;
+      margin-left:auto;
+      flex:0 0 auto;
+    }
+
+    .numInput{
+      width:calc(8ch + 24px);
+      min-width:calc(8ch + 24px);
+      flex:0 0 calc(8ch + 24px);
+      height:44px;
+      padding:0 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+      color:var(--text);
+      text-align:right;
+      outline:none;
+    }
+
+    .numInput.numInputLong{
+      width:calc(10ch + 24px);
+      min-width:calc(10ch + 24px);
+      flex:0 0 calc(10ch + 24px);
+    }
+
+    .numInput:focus{
+      border-color:rgba(143,220,193,0.34);
+      box-shadow:0 0 0 3px rgba(143,220,193,0.10);
+    }
+
+    .unit{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:52px;
+      height:44px;
+      padding:0 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .choiceGroup{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:8px;
+      width:100%;
+      max-width:440px;
+      margin-left:auto;
+    }
+
+    .choiceBtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+      color:var(--muted);
+      min-height:44px;
+      padding:0 16px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease,color 0.15s ease,box-shadow 0.15s ease;
+      white-space:nowrap;
+    }
+
+    .choiceBtn:hover{
+      transform:translateY(-1px);
+    }
+
+    .choiceBtn.isSelected{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+      border-color:transparent;
+      box-shadow:0 10px 18px rgba(0,0,0,0.18);
+    }
+    .yakuGroupStack{
+      display:grid;
+      gap:12px;
+    }
+
+    .yakuGroupBox{
+      display:grid;
+      gap:12px;
+      padding:16px;
+      border-radius:18px;
+      background:rgba(0,0,0,0.16);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .yakuGroupTitle{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.4;
+    }
+
+    .yakuChipList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .yakuChipBtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.05);
+      color:var(--muted);
+      min-height:40px;
+      padding:0 16px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background 0.15s ease,border-color 0.15s ease,transform 0.15s ease,color 0.15s ease,box-shadow 0.15s ease,opacity 0.15s ease;
+      white-space:nowrap;
+    }
+
+    .yakuChipBtn:hover{
+      transform:translateY(-1px);
+    }
+
+    .yakuChipBtn.isSelected{
+      background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 100%);
+      color:var(--gold-text);
+      border-color:transparent;
+      box-shadow:0 10px 18px rgba(0,0,0,0.18);
+    }
+
+    .yakuChipBtn:not(.isSelected){
+      opacity:0.78;
+    }
+
+    .localYakuList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+
+    .pairInputs{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      width:auto;
+      max-width:none;
+      margin-left:auto;
+      flex-wrap:wrap;
+    }
+
+    .pairField{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+
+    .pairLabel{
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .noteInline{
+      display:inline-flex;
+      align-items:center;
+      min-height:44px;
+      padding:0 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+
+    .comboChoiceInput{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      width:auto;
+      max-width:none;
+      margin-left:auto;
+      flex-wrap:wrap;
+    }
+
+    .comboChoiceInput .choiceGroup{
+      width:auto;
+      max-width:none;
+      margin-left:0;
+      justify-content:flex-start;
+    }
+
+    .comboChoiceInput .numInputWrap{
+      width:auto;
+      max-width:none;
+      margin-left:0;
+      justify-content:flex-start;
+    }
+
+    .placeholderBox{
+      display:flex;
+      align-items:center;
+      min-height:44px;
+      padding:0 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,0.05);
+      border:1px dashed rgba(255,255,255,0.16);
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .footerNote{
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      line-height:1.8;
+      font-size:13px;
+    }
+
+    @media (max-width: 900px){
+      .heroMeta,
+      .settingRow{
+        grid-template-columns:1fr;
+      }
+
+      .settingControl{
+        justify-content:flex-start;
+      }
+
+      .numInputWrap,
+      .choiceGroup,
+      .pairInputs{
+        max-width:none;
+        margin-left:0;
+        justify-content:flex-start;
+      }
+    }
+
+    @media (max-width: 640px){
+      body{
+        padding:14px;
+      }
+
+      .hero,
+      .tabsWrap{
+        padding:16px;
+      }
+
+      h1{
+        font-size:28px;
+      }
+
+      .panelToolbarTitle{
+        font-size:20px;
+      }
+
+      .topTabBtn,
+      .tabActionBtn{
+        width:100%;
+        justify-content:center;
+      }
+
+      .tabResetWrap{
+        width:100%;
+        margin-left:0;
+      }
+
+      .settingRow,
+      .sectionCard{
+        padding:16px;
+      }
+
+      .numInputWrap,
+      .choiceGroup,
+      .pairInputs{
+        width:100%;
+      }
+      .comboChoiceInput{
+        width:100%;
+        max-width:none;
+        margin-left:0;
+        justify-content:flex-start;
+      }
+
+      .comboChoiceInput .choiceGroup{
+        width:100%;
+      }
+
+      .comboChoiceInput .numInputWrap{
+        width:100%;
+        max-width:none;
+      }
+
+
+      .choiceBtn{
+        flex:1 1 calc(50% - 8px);
+        justify-content:center;
+      }
+
+      .pairField{
+        flex:1 1 100%;
+      }
+
+      .yakuChipList,
+      .localYakuList{
+        width:100%;
+      }
+
+      .yakuChipBtn{
+        justify-content:center;
+      }
+
+      .yakuChipList .yakuChipBtn,
+      .localYakuList .yakuChipBtn{
+        flex:0 0 auto;
+      }
+
+      .yakuGroupBox{
+        padding:14px;
+      }
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+<section class="hero">
+<div class="heroTop">
+<div class="heroTitle">
+<span class="eyebrow">SANMA LAB</span>
+<h1>ルール変更</h1>
+<p class="heroText">
+            タブごとに項目を縦並びで整理し、採用 / 不採用はスイッチ、点数まわりは入力欄で決めていく形に整理しました。
+            まずはルール変更ページの入力UI土台だけを先に作っています。
+          </p>
+</div>
+<div class="heroActions">
+<a class="btn btnPrimary" href="index_app.html">トップへ戻る</a>
+<button class="btn btnGhost" id="scrollActiveTabBtn" type="button">今のタブ先頭へ</button>
+</div>
+</div>
+</section>
+<section class="tabsWrap">
+<div class="tabsHeaderRow">
+<div aria-label="ルール変更タブ" class="topTabs" role="tablist">
+<button aria-controls="panel-overview" aria-selected="true" class="topTabBtn" data-tab="overview" id="tab-overview" role="tab" type="button">概要</button>
+<button aria-controls="panel-score" aria-selected="false" class="topTabBtn" data-tab="score" id="tab-score" role="tab" type="button">点数・精算</button>
+<button aria-controls="panel-tiles" aria-selected="false" class="topTabBtn" data-tab="tiles" id="tab-tiles" role="tab" type="button">使用牌</button>
+<button aria-controls="panel-basic" aria-selected="false" class="topTabBtn" data-tab="basic" id="tab-basic" role="tab" type="button">基本</button>
+<button aria-controls="panel-extra" aria-selected="false" class="topTabBtn" data-tab="extra" id="tab-extra" role="tab" type="button">補足</button>
+<button aria-controls="panel-yaku" aria-selected="false" class="topTabBtn" data-tab="yaku" id="tab-yaku" role="tab" type="button">採用役</button>
+</div>
+<div class="tabResetWrap">
+<button class="tabActionBtn" id="resetActiveTabBtn" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<div class="mainPanels">
+<section aria-labelledby="tab-overview" class="mainPanel isActive" id="panel-overview" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">概要</div>
+<div class="panelToolbarLead">まずは対局全体の大枠をここで決めます。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="overview" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">概要設定</h2>
+<p class="sectionLead">対局形式、レート、祝儀単価、持ち点、連荘条件をまとめて決めるタブです。</p>
+</div>
+<span class="pill pillAccent">概要</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">半荘戦 / 東風戦</div>
+<div class="settingDesc">対局の長さを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="半荘戦または東風戦" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="hanchan" data-default="hanchan" data-setting-key="overview-game-type" data-setting-type="choice" type="button">半荘戦</button>
+<button class="choiceBtn" data-choice-value="tonpuu" data-setting-key="overview-game-type" data-setting-type="choice" type="button">東風戦</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">レート</div>
+<div class="settingDesc">1000点あたりのレートを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="レート" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="100p" data-default="100p" data-setting-key="overview-rate" data-setting-type="choice" type="button">100p</button>
+<button class="choiceBtn" data-choice-value="50p" data-setting-key="overview-rate" data-setting-type="choice" type="button">50p</button>
+<button class="choiceBtn" data-choice-value="30p" data-setting-key="overview-rate" data-setting-type="choice" type="button">30p</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">祝儀単価</div>
+<div class="settingDesc">1枚あたりの相当ポイントを入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="100" data-setting-key="overview-chip-unit" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">p相当</span>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">持ち点・返し点</div>
+<div class="settingDesc">対局開始時の持ち点と返し点を入力します。</div>
+</div>
+<div class="settingControl">
+<div class="pairInputs">
+<div class="pairField">
+<span class="pairLabel">持ち点</span>
+<input class="numInput numInputLong" data-default="35000" data-setting-key="overview-start-score" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+<div class="pairField">
+<span class="pairLabel">返し点</span>
+<input class="numInput numInputLong" data-default="40000" data-setting-key="overview-return-score" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">聴牌連荘 / アガリ連荘</div>
+<div class="settingDesc">親の連荘条件を選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="連荘条件" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="tenpai" data-default="tenpai" data-setting-key="overview-renchan-type" data-setting-type="choice" type="button">聴牌連荘</button>
+<button class="choiceBtn" data-choice-value="agari" data-setting-key="overview-renchan-type" data-setting-type="choice" type="button">アガリ連荘</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">祝儀対象（一発・裏）</div>
+<div class="settingDesc">一発と裏ドラのどちらを祝儀対象にするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="祝儀対象（一発・裏）" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="both" data-default="both" data-setting-key="overview-chip-target-ippatsu-ura" data-setting-type="choice" type="button">両方</button>
+<button class="choiceBtn" data-choice-value="ippatsu" data-setting-key="overview-chip-target-ippatsu-ura" data-setting-type="choice" type="button">一発のみ</button>
+<button class="choiceBtn" data-choice-value="ura" data-setting-key="overview-chip-target-ippatsu-ura" data-setting-type="choice" type="button">裏のみ</button>
+<button class="choiceBtn" data-choice-value="none" data-setting-key="overview-chip-target-ippatsu-ura" data-setting-type="choice" type="button">どちらもなし</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">祝儀対象（祝儀牌）</div>
+<div class="settingDesc">祝儀牌を面前のみ対象にするか、鳴きでも対象にするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="祝儀対象（祝儀牌）" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="menzen" data-default="menzen" data-setting-key="overview-chip-target-colored" data-setting-type="choice" type="button">面前</button>
+<button class="choiceBtn" data-choice-value="naki" data-setting-key="overview-chip-target-colored" data-setting-type="choice" type="button">鳴き</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">祝儀対象（白ポッチ）</div>
+<div class="settingDesc">白ポッチを祝儀対象にするかを選び、ありの場合の枚数相当を入力します。</div>
+</div>
+<div class="settingControl">
+<div class="comboChoiceInput">
+<div aria-label="祝儀対象（白ポッチ）" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="on" data-default="off" data-setting-key="overview-chip-target-shiro-pocchi" data-setting-type="choice" type="button">あり</button>
+<button class="choiceBtn" data-choice-value="off" data-setting-key="overview-chip-target-shiro-pocchi" data-setting-type="choice" type="button">なし</button>
+</div>
+<div class="numInputWrap">
+<input class="numInput" data-default="1" data-setting-key="overview-chip-target-shiro-pocchi-count" data-setting-type="number" inputmode="numeric" min="0" step="1" type="number"/>
+<span class="unit">枚相当</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+<section aria-labelledby="tab-score" class="mainPanel" id="panel-score" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">点数・精算</div>
+<div class="panelToolbarLead">順位ウマと終了条件まわりをまとめて決めるタブです。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="score" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">順位ウマ</h2>
+<p class="sectionLead">通常時と2着クビあり時のウマ条件をまとめて設定します。</p>
+</div>
+<span class="pill">ウマ</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">2着ウマ</div>
+<div class="settingDesc">通常時の2着ウマを入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="-5" data-setting-key="score-uma-2" data-setting-type="number" inputmode="numeric" step="1" type="number"/>
+<span class="unit">pt</span>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">3着ウマ</div>
+<div class="settingDesc">通常時の3着ウマを入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="-10" data-setting-key="score-uma-3" data-setting-type="number" inputmode="numeric" step="1" type="number"/>
+<span class="unit">pt</span>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">2着クビ</div>
+<div class="settingDesc">なしにするか、クビ条件の点数を入れるかを決めます。</div>
+</div>
+<div class="settingControl">
+<div class="comboChoiceInput">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-kubi-enabled">なし</div>
+<button aria-checked="false" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="off" data-label-off="なし" data-label-on="あり" data-setting-key="score-kubi-enabled" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+<div class="numInputWrap">
+<input class="numInput numInputLong" data-default="40000" data-setting-key="score-kubi-point" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">2着ウマ（クビあり）</div>
+<div class="settingDesc">2着クビあり時の2着ウマを入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="5" data-setting-key="score-kubi-uma-2" data-setting-type="number" inputmode="numeric" step="1" type="number"/>
+<span class="unit">pt</span>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">3着ウマ（2着クビあり）</div>
+<div class="settingDesc">2着クビあり時の3着ウマを入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="-15" data-setting-key="score-kubi-uma-3" data-setting-type="number" inputmode="numeric" step="1" type="number"/>
+<span class="unit">pt</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">点数処理</h2>
+<p class="sectionLead">点数処理方式をここで切り替えます。</p>
+</div>
+<span class="pill">点数</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">ツモ損</div>
+<div class="settingDesc">ツモ損をありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-tsumoson">なし</div>
+<button aria-checked="false" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="off" data-label-off="なし" data-label-on="あり" data-setting-key="score-tsumoson" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">符計算</div>
+<div class="settingDesc">符計算をありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-fu-calc">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="score-fu-calc" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">100点単位</div>
+<div class="settingDesc">100点単位の扱いを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-rounding-type">切り上げ</div>
+<button aria-checked="false" class="switch choiceToggleSwitch" data-choice-off="ceil" data-choice-on="ari" data-default="ceil" data-label-off="切り上げ" data-label-on="あり" data-setting-key="score-rounding-type" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">本場</h2>
+<p class="sectionLead">出アガリ時とツモアガリ時の本場加算をここで決めます。</p>
+</div>
+<span class="pill">本場</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">本場（出アガリ）</div>
+<div class="settingDesc">出アガリ時に放銃者から加算する本場分です。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput numInputLong" data-default="1000" data-setting-key="score-honba-ron" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">本場（ツモ・1人あたり）</div>
+<div class="settingDesc">ツモアガリ時に各支払者から加算する本場分です。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput numInputLong" data-default="1000" data-setting-key="score-honba-tsumo-each" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">聴牌料</h2>
+<p class="sectionLead">流局時のノーテン罰符 / テンパイ料をここで決めます。</p>
+</div>
+<span class="pill">流局</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">聴牌料（1人あたり）</div>
+<div class="settingDesc">1人テンパイ時は各ノーテン者から、2人テンパイ時はノーテン者から各テンパイ者へ支払う点数です。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput numInputLong" data-default="1000" data-setting-key="score-tenpai-fee" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">終了・精算条件</h2>
+<p class="sectionLead">トビ終了、箱下精算、トビチップをここで決めます。</p>
+</div>
+<span class="pill">条件</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">コールド終了</div>
+<div class="settingDesc">指定点数に到達した時点で対局を終了する基準点です。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput numInputLong" data-default="80000" data-setting-key="score-cold-end-point" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">点</span>
+</div>
+</div>
+</div><div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">トビ終了</div>
+<div class="settingDesc">トビ時点で対局を終了するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-tobi-end">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="score-tobi-end" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">箱下精算</div>
+<div class="settingDesc">マイナス分まで精算に含めるかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="score-hakoshita-type">なし</div>
+<button aria-checked="false" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="off" data-label-off="なし" data-label-on="あり" data-setting-key="score-hakoshita-type" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">トビチップ</div>
+<div class="settingDesc">トビ時に動く祝儀相当を入力します。</div>
+</div>
+<div class="settingControl">
+<div class="numInputWrap">
+<input class="numInput" data-default="100" data-setting-key="score-tobi-chip" data-setting-type="number" inputmode="numeric" min="0" step="100" type="number"/>
+<span class="unit">p相当</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+<section aria-labelledby="tab-tiles" class="mainPanel" id="panel-tiles" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">使用牌</div>
+<div class="panelToolbarLead">牌構成、祝儀対象牌、山残し、北や花牌の扱いをここで決めるタブです。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="tiles" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">牌構成</h2>
+<p class="sectionLead">あとで全牌オーバーレイを開いて、赤・金・虹などの色付き牌を細かく決められるようにする予定の仮枠です。</p>
+</div>
+<span class="pill">仮</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">牌構成</div>
+<div class="settingDesc">全牌表示オーバーレイから色付き牌を決める構想のため、ここはいったん仮の箱だけ置いています。</div>
+</div>
+<div class="settingControl">
+<div class="placeholderBox">仮</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">祝儀対象牌</div>
+<div class="settingDesc">採用した色付き牌のうち、どの牌を祝儀対象にするかを後でオーバーレイで決める予定です。</div>
+</div>
+<div class="settingControl">
+<div class="placeholderBox">仮</div>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">牌とドラまわり</h2>
+<p class="sectionLead">山残し、北の扱い、花牌、白ポッチ、各種ドラの採用有無をここで設定します。</p>
+</div>
+<span class="pill">使用牌</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">山残し枚数</div>
+<div class="settingDesc">7トン残しにするか、最後まで取りきりにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="山残し枚数" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="7ton" data-default="7ton" data-setting-key="tiles-wall-end-type" data-setting-type="choice" type="button">7トン残し</button>
+<button class="choiceBtn" data-choice-value="all" data-setting-key="tiles-wall-end-type" data-setting-type="choice" type="button">取りきり</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">北扱い</div>
+<div class="settingDesc">北を抜きドラ・場風・オタ風のどれとして扱うかを選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="北扱い" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="nuki" data-default="nuki" data-setting-key="tiles-pei-type" data-setting-type="choice" type="button">抜きドラ</button>
+<button class="choiceBtn" data-choice-value="bakaze" data-setting-key="tiles-pei-type" data-setting-type="choice" type="button">場風</button>
+<button class="choiceBtn" data-choice-value="otakaze" data-setting-key="tiles-pei-type" data-setting-type="choice" type="button">オタ風</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">花牌</div>
+<div class="settingDesc">花牌を使うかどうかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="tiles-hanahai-type">なし</div>
+<button aria-checked="false" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="off" data-label-off="なし" data-label-on="あり" data-setting-key="tiles-hanahai-type" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">白ポッチ</div>
+<div class="settingDesc">白ポッチを採用するかどうかです。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel" data-label-for="tiles-shiro-pocchi">不採用</div>
+<button aria-checked="false" class="switch" data-default="false" data-setting-key="tiles-shiro-pocchi" data-setting-type="bool" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">裏ドラ</div>
+<div class="settingDesc">リーチ和了時の裏ドラを有効にするかです。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel" data-label-for="tiles-uradora">採用</div>
+<button aria-checked="true" class="switch isOn" data-default="true" data-setting-key="tiles-uradora" data-setting-type="bool" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">槓ドラ</div>
+<div class="settingDesc">カン成立時に槓ドラを有効にするかです。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel" data-label-for="tiles-kandora">採用</div>
+<button aria-checked="true" class="switch isOn" data-default="true" data-setting-key="tiles-kandora" data-setting-type="bool" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">槓裏ドラ</div>
+<div class="settingDesc">リーチ中のカン後に槓裏ドラを有効にするかです。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel" data-label-for="tiles-kanura">採用</div>
+<button aria-checked="true" class="switch isOn" data-default="true" data-setting-key="tiles-kanura" data-setting-type="bool" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+<section aria-labelledby="tab-basic" class="mainPanel" id="panel-basic" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">基本</div>
+<div class="panelToolbarLead">形式聴牌、喰いタン、フリテンまわり、ダブロンなどの基本ルールをここで決めるタブです。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="basic" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">基本ルール</h2>
+<p class="sectionLead">対局中に直接影響する基本項目を切り替えます。</p>
+</div>
+<span class="pill">切替</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">形式聴牌</div>
+<div class="settingDesc">形式聴牌をありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-keishiki-tenpai">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-keishiki-tenpai" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">喰いタン</div>
+<div class="settingDesc">鳴きタンヤオを認めるかどうかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-kuitan-type">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-kuitan-type" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">後付け</div>
+<div class="settingDesc">後付けを認めるかどうかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-atozuke-type">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-atozuke-type" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">ツモピン</div>
+<div class="settingDesc">ツモピンをありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-tsumopin">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-tsumopin" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">途中流局（九種九牌）</div>
+<div class="settingDesc">九種九牌による途中流局をありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-kyuushu">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-kyuushu" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">フリテンリーチ</div>
+<div class="settingDesc">フリテン状態でのリーチをありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-furiten-riichi">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-furiten-riichi" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">リーチ後の見逃し</div>
+<div class="settingDesc">リーチ後の見逃しをありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-riichi-skip">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-riichi-skip" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">4枚使い七対子</div>
+<div class="settingDesc">4枚使い七対子をありにするか、なしにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-chiitoi-4mai">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="なし" data-label-on="あり" data-setting-key="basic-chiitoi-4mai" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">ダブロン</div>
+<div class="settingDesc">ダブロンありにするか、頭ハネにするかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="basic-double-ron">あり</div>
+<button aria-checked="true" class="switch choiceToggleSwitch" data-choice-off="atamahane" data-choice-on="double" data-default="double" data-label-off="頭ハネ" data-label-on="あり" data-setting-key="basic-double-ron" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+<section aria-labelledby="tab-extra" class="mainPanel" id="panel-extra" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">補足</div>
+<div class="panelToolbarLead">符計算例外、流し満貫系、役満複合、祝儀などの追加条件です。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="extra" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">補足条件</h2>
+<p class="sectionLead">通常ルールの外側にある細かな条件をまとめています。</p>
+</div>
+<span class="pill">補足</span>
+</div>
+<div class="settingList">
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">3翻30符満貫切り上げ</div>
+<div class="settingDesc">3翻30符を満貫へ切り上げるかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-kiriage-mangan">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-kiriage-mangan" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">流し倍満</div>
+<div class="settingDesc">流し成立時の扱いを倍満・満貫・なしから選びます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="流し倍満" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="baiman" data-default="baiman" data-setting-key="extra-nagashi-mode" data-setting-type="choice" type="button">倍満</button>
+<button class="choiceBtn" data-choice-value="mangan" data-setting-key="extra-nagashi-mode" data-setting-type="choice" type="button">満貫</button>
+<button class="choiceBtn" data-choice-value="off" data-setting-key="extra-nagashi-mode" data-setting-type="choice" type="button">なし</button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">ダブル役満</div>
+<div class="settingDesc">ダブル役満を採用するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-double-yakuman">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-double-yakuman" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">数え役満</div>
+<div class="settingDesc">数え役満を採用するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-kazoe-yakuman">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-kazoe-yakuman" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">役満のパオ</div>
+<div class="settingDesc">役満の責任払いを採用するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-yakuman-pao">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-yakuman-pao" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">大明槓のパオ</div>
+<div class="settingDesc">大明槓による責任払いを採用するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-daiminkan-pao">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-daiminkan-pao" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">国士無双の暗槓ロン</div>
+<div class="settingDesc">国士無双で暗槓ロンを認めるかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-kokushi-ankan-ron">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-kokushi-ankan-ron" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">ツモ番なしリーチ</div>
+<div class="settingDesc">ツモ番がなくてもリーチできるかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-riichi-without-tsumo">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-riichi-without-tsumo" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">オープンリーチ</div>
+<div class="settingDesc">オープンリーチを採用するかを選びます。</div>
+</div>
+<div class="settingControl">
+<div class="switchWrap">
+<div class="switchLabel choiceToggleLabel" data-choice-label-for="extra-open-riichi">採用</div>
+<button aria-checked="true" class="switch choiceToggleSwitch isOn" data-choice-off="off" data-choice-on="on" data-default="on" data-label-off="不採用" data-label-on="採用" data-setting-key="extra-open-riichi" data-setting-type="choice-toggle" role="switch" type="button"></button>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+<section aria-labelledby="tab-yaku" class="mainPanel" id="panel-yaku" role="tabpanel">
+<div class="panelToolbar">
+<div class="panelToolbarText">
+<div class="panelToolbarTitle">採用役</div>
+<div class="panelToolbarLead">基本役と三麻ローカル役をまとめて切り替えるタブです。</div>
+</div>
+<div class="toolbarActions">
+<button class="tabActionBtn" data-reset-panel="yaku" type="button">このタブを初期値に戻す</button>
+</div>
+</div>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">基本役</h2>
+<p class="sectionLead">基本採用の役は点灯状態で並べ、押すと消灯して不採用にできます。</p>
+</div>
+<span class="pill">基本役</span>
+</div>
+<div class="yakuGroupStack">
+<div class="yakuGroupBox">
+<div class="yakuGroupTitle">1翻役</div>
+<div class="yakuChipList">
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-riichi" data-setting-type="bool-chip" type="button">立直</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-ippatsu" data-setting-type="bool-chip" type="button">一発</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-tsumo" data-setting-type="bool-chip" type="button">門前清自摸和</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-tanyao" data-setting-type="bool-chip" type="button">断么九</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-pinfu" data-setting-type="bool-chip" type="button">平和</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-iipeikou" data-setting-type="bool-chip" type="button">一盃口</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-yakuhai" data-setting-type="bool-chip" type="button">役牌（白・發・中・場風・自風）</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-haitei" data-setting-type="bool-chip" type="button">海底摸月</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-houtei" data-setting-type="bool-chip" type="button">河底撈魚</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-rinshan" data-setting-type="bool-chip" type="button">嶺上開花</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chankan" data-setting-type="bool-chip" type="button">槍槓</button>
+</div>
+</div>
+<div class="yakuGroupBox">
+<div class="yakuGroupTitle">2翻役</div>
+<div class="yakuChipList">
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-double-riichi" data-setting-type="bool-chip" type="button">ダブル立直</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chiitoitsu" data-setting-type="bool-chip" type="button">七対子</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-toitoi" data-setting-type="bool-chip" type="button">対々和</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-sanankou" data-setting-type="bool-chip" type="button">三暗刻</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chanta" data-setting-type="bool-chip" type="button">混全帯么九</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-junchan" data-setting-type="bool-chip" type="button">純全帯么九</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-ittsuu" data-setting-type="bool-chip" type="button">一気通貫</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-honroutou" data-setting-type="bool-chip" type="button">混老頭</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-shousangen" data-setting-type="bool-chip" type="button">小三元</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-honitsu" data-setting-type="bool-chip" type="button">混一色</button>
+</div>
+</div>
+<div class="yakuGroupBox">
+<div class="yakuGroupTitle">3翻以上</div>
+<div class="yakuChipList">
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-ryanpeikou" data-setting-type="bool-chip" type="button">二盃口</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chinitsu" data-setting-type="bool-chip" type="button">清一色</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-nagashi-baiman-base" data-setting-type="bool-chip" type="button">流し倍満</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-renhou" data-setting-type="bool-chip" type="button">人和（4翻役）</button>
+</div>
+</div>
+<div class="yakuGroupBox">
+<div class="yakuGroupTitle">役満</div>
+<div class="yakuChipList">
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-kokushi" data-setting-type="bool-chip" type="button">国士無双</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-suuankou" data-setting-type="bool-chip" type="button">四暗刻</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-daisangen" data-setting-type="bool-chip" type="button">大三元</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-tsuuiisou" data-setting-type="bool-chip" type="button">字一色</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-ryuuiisou" data-setting-type="bool-chip" type="button">緑一色</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chinroutou" data-setting-type="bool-chip" type="button">清老頭</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-shousuushii" data-setting-type="bool-chip" type="button">小四喜</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-daisuushii" data-setting-type="bool-chip" type="button">大四喜</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chuuren" data-setting-type="bool-chip" type="button">九蓮宝燈</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-suukantsu" data-setting-type="bool-chip" type="button">四槓子</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-tenhou" data-setting-type="bool-chip" type="button">天和</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-chiihou" data-setting-type="bool-chip" type="button">地和</button>
+</div>
+</div>
+</div>
+</article>
+<article class="sectionCard">
+<div class="sectionHead">
+<div class="sectionTitleBox">
+<h2 class="sectionTitle">三麻ローカル役</h2>
+<p class="sectionLead">そこそこ有名な三麻ローカル役を下にまとめています。</p>
+</div>
+<span class="pill">ローカル</span>
+</div>
+<div class="yakuGroupStack">
+<div class="yakuGroupBox">
+<div class="yakuGroupTitle">採用切替</div>
+<div class="localYakuList">
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-local-sanpuu" data-setting-type="bool-chip" type="button">三風</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-local-sanrenkou" data-setting-type="bool-chip" type="button">三連刻</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-local-shousharin" data-setting-type="bool-chip" type="button">小車輪</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-local-suurenkou" data-setting-type="bool-chip" type="button">四連刻</button>
+<button class="yakuChipBtn" data-default="true" data-setting-key="yaku-local-daisharin" data-setting-type="bool-chip" type="button">大車輪</button>
+</div>
+</div>
+<div class="settingRow">
+<div class="settingMeta">
+<div class="settingLabel">萬子のホンイツ</div>
+<div class="settingDesc">なし・倍満・役満の3択で決めます。</div>
+</div>
+<div class="settingControl">
+<div aria-label="萬子のホンイツ" class="choiceGroup" role="group">
+<button class="choiceBtn" data-choice-value="off" data-setting-key="yaku-local-manzu-honitsu" data-setting-type="choice" type="button">なし</button>
+<button class="choiceBtn" data-choice-value="baiman" data-setting-key="yaku-local-manzu-honitsu" data-setting-type="choice" type="button">倍満</button>
+<button class="choiceBtn" data-choice-value="yakuman" data-default="yakuman" data-setting-key="yaku-local-manzu-honitsu" data-setting-type="choice" type="button">役満</button>
+</div>
+</div>
+</div>
+</div>
+</article>
+</section>
+</div>
+<div class="footerNote">
+        現在は入力UIと保存まわりまで接続済みです。<strong>半荘戦 / 東風戦、持ち点 / 返し点、連荘条件、ウマ / クビ、トビ終了、箱下精算、本場、聴牌料、コールド終了</strong> はアプリ版対局へ反映されます。
+      </div>
+</section>
+</main>
+<script>
+    (function () {
+      var storageKey = "mbsanma_rules_ui_v2";
+      var persistStorageKey = "mbsanma_rules_ui_persist_v1";
+      var rulesStorageKey = "mbsanma_rules_settings_v1";
+      var state = loadState();
+      var topTabButtons = Array.prototype.slice.call(document.querySelectorAll(".topTabBtn"));
+      var mainPanels = Array.prototype.slice.call(document.querySelectorAll(".mainPanel"));
+      var scrollActiveTabBtn = document.getElementById("scrollActiveTabBtn");
+      var resetActiveTabBtn = document.getElementById("resetActiveTabBtn");
+      var resetButtons = Array.prototype.slice.call(document.querySelectorAll("[data-reset-panel]"));
+      var boolControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="bool"]'));
+      var boolChipControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="bool-chip"]'));
+      var numberControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="number"]'));
+      var choiceControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="choice"]'));
+      var choiceToggleControls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="choice-toggle"]'));
+
+      function loadState() {
+        try {
+          var persistedRaw = localStorage.getItem(persistStorageKey);
+          if (persistedRaw) {
+            return JSON.parse(persistedRaw) || {};
+          }
+        } catch (e) {}
+
+        try {
+          var raw = sessionStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveState() {
+        try {
+          sessionStorage.setItem(storageKey, JSON.stringify(state));
+        } catch (e) {}
+
+        try {
+          localStorage.setItem(persistStorageKey, JSON.stringify(state));
+        } catch (e) {}
+
+        try {
+          localStorage.setItem(rulesStorageKey, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      function activateMainTab(tabName) {
+        topTabButtons.forEach(function (button) {
+          var isActive = button.dataset.tab === tabName;
+          button.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+
+        mainPanels.forEach(function (panel) {
+          panel.classList.toggle("isActive", panel.id === "panel-" + tabName);
+        });
+
+        state.activeMainTab = tabName;
+        saveState();
+      }
+
+      function updateSwitchLabel(key, value) {
+        var label = document.querySelector('[data-label-for="' + key + '"]');
+        if (!label) return;
+        label.textContent = value ? "採用" : "不採用";
+      }
+
+      function setBoolValue(control, value) {
+        control.classList.toggle("isOn", value);
+        control.setAttribute("aria-checked", value ? "true" : "false");
+        state[control.dataset.settingKey] = !!value;
+        updateSwitchLabel(control.dataset.settingKey, !!value);
+        saveState();
+      }
+
+      function setBoolChipValue(control, value) {
+        control.classList.toggle("isSelected", value);
+        control.setAttribute("aria-pressed", value ? "true" : "false");
+        state[control.dataset.settingKey] = !!value;
+        saveState();
+      }
+
+      function setNumberValue(control, value) {
+        control.value = value;
+        state[control.dataset.settingKey] = String(value);
+        saveState();
+      }
+      function setChoiceValue(key, value) {
+        var controls = Array.prototype.slice.call(document.querySelectorAll('[data-setting-type="choice"][data-setting-key="' + key + '"]'));
+        controls.forEach(function (control) {
+          var isSelected = control.dataset.choiceValue === value;
+          control.classList.toggle("isSelected", isSelected);
+          control.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
+        state[key] = String(value);
+        saveState();
+      }
+
+      function updateChoiceToggleLabel(key, value) {
+        var label = document.querySelector('[data-choice-label-for="' + key + '"]');
+        var control = document.querySelector('[data-setting-type="choice-toggle"][data-setting-key="' + key + '"]');
+        if (!label || !control) return;
+        label.textContent = value === control.dataset.choiceOn ? control.dataset.labelOn : control.dataset.labelOff;
+      }
+
+      function setChoiceToggleValue(control, value) {
+        var isOn = value === control.dataset.choiceOn;
+        control.classList.toggle("isOn", isOn);
+        control.setAttribute("aria-checked", isOn ? "true" : "false");
+        state[control.dataset.settingKey] = String(value);
+        updateChoiceToggleLabel(control.dataset.settingKey, String(value));
+        saveState();
+      }
+
+
+      function resetPanel(panelKey) {
+        var panel = document.getElementById("panel-" + panelKey);
+        if (!panel) return;
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="bool"]')).forEach(function (control) {
+          var value = String(control.dataset.default) === "true";
+          setBoolValue(control, value);
+        });
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="number"]')).forEach(function (control) {
+          setNumberValue(control, control.dataset.default || "");
+        });
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="bool-chip"]')).forEach(function (control) {
+          var value = String(control.dataset.default) === "true";
+          setBoolChipValue(control, value);
+        });
+
+        var choiceGroups = {};
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="choice"]')).forEach(function (control) {
+          var key = control.dataset.settingKey;
+          if (!choiceGroups[key]) {
+            choiceGroups[key] = control.dataset.default || control.dataset.choiceValue || "";
+          }
+        });
+
+        Object.keys(choiceGroups).forEach(function (key) {
+          setChoiceValue(key, choiceGroups[key]);
+        });
+
+        Array.prototype.slice.call(panel.querySelectorAll('[data-setting-type="choice-toggle"]')).forEach(function (control) {
+          setChoiceToggleValue(control, control.dataset.default || control.dataset.choiceOn || "");
+        });
+      }
+
+      topTabButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          activateMainTab(button.dataset.tab);
+        });
+      });
+
+      boolControls.forEach(function (control) {
+        control.addEventListener("click", function () {
+          var current = control.getAttribute("aria-checked") === "true";
+          setBoolValue(control, !current);
+        });
+      });
+
+      boolChipControls.forEach(function (control) {
+        control.addEventListener("click", function () {
+          var current = control.classList.contains("isSelected");
+          setBoolChipValue(control, !current);
+        });
+      });
+
+      numberControls.forEach(function (control) {
+        control.addEventListener("input", function () {
+          setNumberValue(control, control.value);
+        });
+      });
+      choiceControls.forEach(function (control) {
+        control.addEventListener("click", function () {
+          setChoiceValue(control.dataset.settingKey, control.dataset.choiceValue);
+        });
+      });
+
+      choiceToggleControls.forEach(function (control) {
+        control.addEventListener("click", function () {
+          var current = state[control.dataset.settingKey];
+          var nextValue = current === control.dataset.choiceOn ? control.dataset.choiceOff : control.dataset.choiceOn;
+          setChoiceToggleValue(control, nextValue);
+        });
+      });
+
+
+      resetButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          resetPanel(button.dataset.resetPanel);
+        });
+      });
+
+      if (resetActiveTabBtn) {
+        resetActiveTabBtn.addEventListener("click", function () {
+          var activeTabButton = document.querySelector('.topTabBtn[aria-selected="true"]');
+          if (!activeTabButton) return;
+          resetPanel(activeTabButton.dataset.tab);
+        });
+      }
+
+      if (scrollActiveTabBtn) {
+        scrollActiveTabBtn.addEventListener("click", function () {
+          var activePanel = document.querySelector(".mainPanel.isActive");
+          if (!activePanel) return;
+          activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      boolControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = String(control.dataset.default) === "true";
+        var storedValue = typeof state[key] === "boolean" ? state[key] : defaultValue;
+        setBoolValue(control, storedValue);
+      });
+
+      boolChipControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = String(control.dataset.default) === "true";
+        var storedValue = typeof state[key] === "boolean" ? state[key] : defaultValue;
+        setBoolChipValue(control, storedValue);
+      });
+
+      numberControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = control.dataset.default || "";
+        var storedValue = typeof state[key] === "string" ? state[key] : defaultValue;
+        setNumberValue(control, storedValue);
+      });
+
+      (function () {
+        var seen = {};
+        choiceControls.forEach(function (control) {
+          var key = control.dataset.settingKey;
+          if (seen[key]) return;
+          seen[key] = true;
+          var defaultValue = control.dataset.default || control.dataset.choiceValue || "";
+          var storedValue = typeof state[key] === "string" ? state[key] : defaultValue;
+          setChoiceValue(key, storedValue);
+        });
+      })();
+
+      choiceToggleControls.forEach(function (control) {
+        var key = control.dataset.settingKey;
+        var defaultValue = control.dataset.default || control.dataset.choiceOn || "";
+        var storedValue = typeof state[key] === "string" ? state[key] : defaultValue;
+        setChoiceToggleValue(control, storedValue);
+      });
+
+      activateMainTab(state.activeMainTab || "overview");
+    })();
+  </script>
+</body>
+</html>
